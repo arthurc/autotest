@@ -1,0 +1,27 @@
+plugins {
+    id 'java-library'
+    id 'org.springframework.boot' apply false
+    id 'io.spring.dependency-management'
+}
+
+java {
+    sourceCompatibility = '21'
+
+    registerFeature('optional') {
+        usingSourceSet(sourceSets.main)
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencyManagement {
+    imports {
+        mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES
+    }
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

@@ -1,0 +1,11 @@
+plugins {
+    id 'java'
+    id 'autotest.library-conventions'
+    id 'org.springframework.boot'
+}
+
+group = 'io.github.arthurc.example.autotest'
+
+dependencies {
+    implementation project(':starters:spring-boot-starter-autotest')
+}
