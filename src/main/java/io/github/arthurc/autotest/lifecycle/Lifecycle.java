@@ -18,9 +18,12 @@ public abstract class Lifecycle {
 	public void run(Runnable task) {
 		onLifecycleEvent(new LifecycleEvent.BeforeBegin(this));
 		onLifecycleEvent(new LifecycleEvent.AfterBegin(this));
-		task.run();
-		onLifecycleEvent(new LifecycleEvent.BeforeEnd(this));
-		onLifecycleEvent(new LifecycleEvent.AfterEnd(this));
+		try {
+			task.run();
+		} finally {
+			onLifecycleEvent(new LifecycleEvent.BeforeEnd(this));
+			onLifecycleEvent(new LifecycleEvent.AfterEnd(this));
+		}
 	}
 
 	protected void onLifecycleEvent(LifecycleEvent event) {

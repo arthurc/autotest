@@ -6,6 +6,7 @@ package io.github.arthurc.autotest.lifecycle;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 class TestLifecycle extends Lifecycle {
@@ -31,6 +32,19 @@ class LifecycleTest {
 			inOrder.verify(task).run();
 			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
 			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
+		}
+
+		@Test
+		void Publishes_lifecycle_events_even_when_the_task_throws_an_exception() {
+			var lifecycle = spy(new TestLifecycle());
+			var task = (Runnable) () -> {
+				throw new RuntimeException();
+			};
+
+			assertThatThrownBy(() -> lifecycle.run(task)).isInstanceOf(RuntimeException.class);
+
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
 		}
 
 	}
