@@ -1,0 +1,13 @@
+plugins {
+	id 'autotest.library-conventions'
+}
+
+allprojects {
+	group = 'io.github.arthurc.autotest'
+	version = '0.0.1-SNAPSHOT'
+}
+
+dependencies {
+	optionalApi 'org.springframework.boot:spring-boot-starter'
+	optionalApi 'org.springframework.boot:spring-boot-starter-test'
+}
