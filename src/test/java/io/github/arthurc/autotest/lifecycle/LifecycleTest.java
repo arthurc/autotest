@@ -10,6 +10,9 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoSettings;
 
+import java.util.concurrent.Callable;
+
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
@@ -50,6 +53,44 @@ class LifecycleTest {
 
 			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
 			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
+		}
+	}
+
+	@Nested
+	class Calling_a_lifecycle {
+
+		@Spy
+		private TestLifecycle lifecycle;
+
+		@Mock
+		private Callable<String> action;
+
+		@Test
+		void Returns_the_result_of_the_action() {
+			var result = lifecycle.call(() -> 42);
+
+			assertThat(result).isEqualTo(42);
+		}
+
+		@Test
+		void Publishes_lifeycle_events_in_the_correct_order() throws Exception {
+			lifecycle.call(action);
+
+			var inOrder = inOrder(lifecycle, action);
+			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeBegin(lifecycle));
+			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterBegin(lifecycle));
+			inOrder.verify(action).call();
+			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
+			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
+		}
+
+		@Test
+		void Throws_checked_exceptions_as_a_LifecycleException() throws Exception {
+			doThrow(new Exception("Foo")).when(action).call();
+
+			assertThatThrownBy(() -> lifecycle.call(action))
+					.isInstanceOf(LifecycleException.class)
+					.hasMessage("An exception occurred during the lifecycle action");
 		}
 	}
 

@@ -15,4 +15,8 @@ public class LifecycleException extends RuntimeException {
 		super(message);
 	}
 
+	public LifecycleException(String message, Throwable cause) {
+		super(message, cause);
+	}
+
 }

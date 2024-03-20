@@ -5,6 +5,7 @@ package io.github.arthurc.autotest.lifecycle;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.concurrent.Callable;
 import java.util.function.Consumer;
 
 /**
@@ -37,6 +38,17 @@ public abstract class Lifecycle {
 		begin();
 		try {
 			task.run();
+		} finally {
+			end();
+		}
+	}
+
+	public <T> T call(Callable<T> action) {
+		begin();
+		try {
+			return action.call();
+		} catch (Exception e) {
+			throw new LifecycleException("An exception occurred during the lifecycle action", e);
 		} finally {
 			end();
 		}
@@ -101,4 +113,5 @@ public abstract class Lifecycle {
 
 	protected void onLifecycleEvent(LifecycleEvent event) {
 	}
+
 }
