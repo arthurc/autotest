@@ -5,6 +5,7 @@ package io.github.arthurc.autotest.lifecycle;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -27,7 +28,7 @@ class LifecycleTest {
 	@Nested
 	class A_Lifecycle_that_is_run {
 		@Spy
-		private TestLifecycle lifecycle = new TestLifecycle();
+		private TestLifecycle lifecycle;
 
 		@Test
 		void Publishes_lifeycle_events_in_the_correct_order() {
@@ -130,13 +131,25 @@ class LifecycleTest {
 					.isInstanceOf(IllegalStateException.class)
 					.hasMessage("Lifecycle is already the current lifecycle on the callstack");
 		}
+
+		@Test
+		void Can_handle_that_the_lifecycle_event_callback_throws_an_exception() {
+			lenient().doThrow(new RuntimeException()).when(lifecycle).onLifecycleEvent(isA(LifecycleEvent.BeforeBegin.class));
+
+			assertThatThrownBy(lifecycle::begin)
+					.isInstanceOf(LifecycleException.class)
+					.hasSuppressedException(new RuntimeException());
+
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeBegin(lifecycle));
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterBegin(lifecycle));
+		}
 	}
 
 	@Nested
 	class Ending_a_lifecycle {
 
-		@Spy
-		private TestLifecycle lifecycle = new TestLifecycle();
+		@Mock(answer = Answers.CALLS_REAL_METHODS)
+		private TestLifecycle lifecycle;
 
 		@Spy
 		private TestLifecycle other = new TestLifecycle();
@@ -165,6 +178,19 @@ class LifecycleTest {
 			assertThatThrownBy(lifecycle::end)
 					.isInstanceOf(IllegalStateException.class)
 					.hasMessage("Lifecycle is not the current lifecycle on the callstack");
+		}
+
+		@Test
+		void Can_handle_that_the_lifecycle_event_callback_throws_an_exception() {
+			lenient().doThrow(new RuntimeException()).when(lifecycle).onLifecycleEvent(isA(LifecycleEvent.BeforeEnd.class));
+
+			lifecycle.begin();
+			assertThatThrownBy(lifecycle::end)
+					.isInstanceOf(LifecycleException.class)
+					.hasSuppressedException(new RuntimeException());
+
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
 		}
 	}
 

@@ -5,6 +5,7 @@ package io.github.arthurc.autotest.lifecycle;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.function.Consumer;
 
 /**
  * A lifecycle is a thread scoped execution of code that has a start and an end.
@@ -50,10 +51,15 @@ public abstract class Lifecycle {
 			throw new IllegalStateException("Lifecycle is already the current lifecycle on the callstack");
 		}
 
-		publish(new LifecycleEvent.BeforeBegin(this));
+		LifecycleException exception = new LifecycleException("An exception occurred during lifecycle event publication");
+		publish(new LifecycleEvent.BeforeBegin(this), exception::addSuppressed);
 		this.parent = CALLSTACK.get().peek();
 		CALLSTACK.get().push(this);
-		publish(new LifecycleEvent.AfterBegin(this));
+		publish(new LifecycleEvent.AfterBegin(this), exception::addSuppressed);
+
+		if (exception.getSuppressed().length > 0) {
+			throw exception;
+		}
 	}
 
 	/**
@@ -67,16 +73,29 @@ public abstract class Lifecycle {
 			throw new IllegalStateException("Lifecycle is not the current lifecycle on the callstack");
 		}
 
-		publish(new LifecycleEvent.BeforeEnd(this));
+		LifecycleException exception = new LifecycleException("An exception occurred during lifecycle event publication");
+		publish(new LifecycleEvent.BeforeEnd(this), exception::addSuppressed);
 		CALLSTACK.get().pop();
 		this.parent = null;
-		publish(new LifecycleEvent.AfterEnd(this));
+		publish(new LifecycleEvent.AfterEnd(this), exception::addSuppressed);
+
+		if (exception.getSuppressed().length > 0) {
+			throw exception;
+		}
 	}
 
-	private void publish(LifecycleEvent event) {
-		onLifecycleEvent(event);
+	private void publish(LifecycleEvent event, Consumer<RuntimeException> exceptionHandler) {
+		try {
+			onLifecycleEvent(event);
+		} catch (RuntimeException e) {
+			if (exceptionHandler != null) {
+				exceptionHandler.accept(e);
+			} else {
+				throw e;
+			}
+		}
 		if (this.parent != null) {
-			this.parent.publish(event);
+			this.parent.publish(event, exceptionHandler);
 		}
 	}
 
