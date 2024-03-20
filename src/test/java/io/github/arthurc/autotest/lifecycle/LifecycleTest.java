@@ -41,23 +41,24 @@ class LifecycleTest {
 			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeBegin(lifecycle));
 			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterBegin(lifecycle));
 			inOrder.verify(task).run();
-			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
+			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle, LifecycleResult.VOID));
 			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
 		}
 
 		@Test
 		void Publishes_lifecycle_events_even_when_the_task_throws_an_exception() {
-			doThrow(new RuntimeException()).when(task).run();
+			RuntimeException exception = new RuntimeException();
+			doThrow(exception).when(task).run();
 
 			assertThatThrownBy(() -> lifecycle.run(task)).isInstanceOf(RuntimeException.class);
 
-			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle, new LifecycleResult.Error(exception)));
 			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
 		}
 	}
 
 	@Nested
-	class Calling_a_lifecycle {
+	class Calling_an_action_on_a_lifecycle {
 
 		@Spy
 		private TestLifecycle lifecycle;
@@ -80,7 +81,7 @@ class LifecycleTest {
 			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeBegin(lifecycle));
 			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterBegin(lifecycle));
 			inOrder.verify(action).call();
-			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
+			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle, new LifecycleResult.Ok(null)));
 			inOrder.verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
 		}
 
@@ -91,6 +92,23 @@ class LifecycleTest {
 			assertThatThrownBy(() -> lifecycle.call(action))
 					.isInstanceOf(LifecycleException.class)
 					.hasMessage("An exception occurred during the lifecycle action");
+		}
+
+		@Test
+		void Rethrows_runtime_exceptions() throws Exception {
+			RuntimeException exception = new RuntimeException("Foo");
+			doThrow(exception).when(action).call();
+
+			assertThatThrownBy(() -> lifecycle.call(action)).isEqualTo(exception);
+		}
+
+		@Test
+		void Propagates_the_result_of_the_action_via_the_lifecycle_events() throws Exception {
+			when(action.call()).thenReturn("Foo");
+
+			lifecycle.call(action);
+
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle, new LifecycleResult.Ok("Foo")));
 		}
 	}
 
@@ -114,10 +132,10 @@ class LifecycleTest {
 			inOrder.verify(inner).onLifecycleEvent(new LifecycleEvent.AfterBegin(inner));
 			inOrder.verify(outer).onLifecycleEvent(new LifecycleEvent.AfterBegin(inner));
 			inOrder.verify(task).run();
-			inOrder.verify(inner).onLifecycleEvent(new LifecycleEvent.BeforeEnd(inner));
-			inOrder.verify(outer).onLifecycleEvent(new LifecycleEvent.BeforeEnd(inner));
+			inOrder.verify(inner).onLifecycleEvent(new LifecycleEvent.BeforeEnd(inner, LifecycleResult.VOID));
+			inOrder.verify(outer).onLifecycleEvent(new LifecycleEvent.BeforeEnd(inner, LifecycleResult.VOID));
 			inOrder.verify(inner).onLifecycleEvent(new LifecycleEvent.AfterEnd(inner));
-			inOrder.verify(outer).onLifecycleEvent(new LifecycleEvent.BeforeEnd(outer));
+			inOrder.verify(outer).onLifecycleEvent(new LifecycleEvent.BeforeEnd(outer, LifecycleResult.VOID));
 			inOrder.verify(outer).onLifecycleEvent(new LifecycleEvent.AfterEnd(outer));
 		}
 
@@ -198,15 +216,15 @@ class LifecycleTest {
 		@Test
 		void Publishes_BeforeEnd_and_AfterEnd_events() {
 			lifecycle.begin();
-			lifecycle.end();
+			lifecycle.end(LifecycleResult.VOID);
 
-			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle, LifecycleResult.VOID));
 			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
 		}
 
 		@Test
 		void Throws_an_exception_if_the_lifecycle_is_ended_without_being_started() {
-			assertThatThrownBy(lifecycle::end)
+			assertThatThrownBy(() -> lifecycle.end(LifecycleResult.VOID))
 					.isInstanceOf(IllegalStateException.class)
 					.hasMessage("Lifecycle is not the current lifecycle on the callstack");
 		}
@@ -216,7 +234,7 @@ class LifecycleTest {
 			lifecycle.begin();
 			other.begin();
 
-			assertThatThrownBy(lifecycle::end)
+			assertThatThrownBy(() -> lifecycle.end(LifecycleResult.VOID))
 					.isInstanceOf(IllegalStateException.class)
 					.hasMessage("Lifecycle is not the current lifecycle on the callstack");
 		}
@@ -226,11 +244,11 @@ class LifecycleTest {
 			lenient().doThrow(new RuntimeException()).when(lifecycle).onLifecycleEvent(isA(LifecycleEvent.BeforeEnd.class));
 
 			lifecycle.begin();
-			assertThatThrownBy(lifecycle::end)
+			assertThatThrownBy(() -> lifecycle.end(LifecycleResult.VOID))
 					.isInstanceOf(LifecycleException.class)
 					.hasSuppressedException(new RuntimeException());
 
-			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle, LifecycleResult.VOID));
 			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
 		}
 	}

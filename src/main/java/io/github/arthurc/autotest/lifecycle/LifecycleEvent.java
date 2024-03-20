@@ -39,7 +39,7 @@ public sealed interface LifecycleEvent {
 	 *
 	 * @param lifecycle The lifecycle.
 	 */
-	record BeforeEnd(Lifecycle lifecycle) implements LifecycleEvent {
+	record BeforeEnd(Lifecycle lifecycle, LifecycleResult result) implements LifecycleEvent {
 	}
 
 	/**

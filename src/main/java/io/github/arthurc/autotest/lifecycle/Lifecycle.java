@@ -35,22 +35,32 @@ public abstract class Lifecycle {
 	 * @param task The task to run.
 	 */
 	public void run(Runnable task) {
-		begin();
-		try {
+		call(() -> {
 			task.run();
-		} finally {
-			end();
-		}
+			return null;
+		});
 	}
 
+	/**
+	 * Calls an action within the lifecycle. The lifecycle publishes events before and after the action is called along
+	 * with the result of the action.
+	 * .
+	 * @param action The action to call.
+	 * @param <T>    The type of the result.
+	 * @return The result of the action.
+	 */
 	public <T> T call(Callable<T> action) {
 		begin();
 		try {
-			return action.call();
+			var value = action.call();
+			end(new LifecycleResult.Ok(value));
+			return value;
+		} catch (RuntimeException e) {
+			end(new LifecycleResult.Error(e));
+			throw e;
 		} catch (Exception e) {
+			end(new LifecycleResult.Error(e));
 			throw new LifecycleException("An exception occurred during the lifecycle action", e);
-		} finally {
-			end();
 		}
 	}
 
@@ -80,13 +90,13 @@ public abstract class Lifecycle {
 	 *
 	 * @throws IllegalStateException If the lifecycle is not the current lifecycle on the callstack.
 	 */
-	public void end() {
+	public void end(LifecycleResult result) {
 		if (CALLSTACK.get().peek() != this) {
 			throw new IllegalStateException("Lifecycle is not the current lifecycle on the callstack");
 		}
 
 		LifecycleException exception = new LifecycleException("An exception occurred during lifecycle event publication");
-		publish(new LifecycleEvent.BeforeEnd(this), exception::addSuppressed);
+		publish(new LifecycleEvent.BeforeEnd(this, result), exception::addSuppressed);
 		CALLSTACK.get().pop();
 		this.parent = null;
 		publish(new LifecycleEvent.AfterEnd(this), exception::addSuppressed);
