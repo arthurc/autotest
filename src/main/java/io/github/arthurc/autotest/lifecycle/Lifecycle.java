@@ -33,18 +33,34 @@ public abstract class Lifecycle {
 	 * @param task The task to run.
 	 */
 	public void run(Runnable task) {
+		begin();
+		try {
+			task.run();
+		} finally {
+			end();
+		}
+	}
+
+	/**
+	 * Begins the lifecycle. This method publishes a {@link LifecycleEvent.BeforeBegin} event before it is attached to
+	 * the lifecycle callstack, and a {@link LifecycleEvent.AfterBegin} event after it is attached to the lifecycle.
+	 */
+	public void begin() {
 		publish(new LifecycleEvent.BeforeBegin(this));
 		this.parent = CALLSTACK.get().peek();
 		CALLSTACK.get().push(this);
 		publish(new LifecycleEvent.AfterBegin(this));
-		try {
-			task.run();
-		} finally {
-			publish(new LifecycleEvent.BeforeEnd(this));
-			CALLSTACK.get().pop();
-			this.parent = null;
-			publish(new LifecycleEvent.AfterEnd(this));
-		}
+	}
+
+	/**
+	 * Ends the lifecycle. This method publishes a {@link LifecycleEvent.BeforeEnd} event before it is detached from the
+	 * lifecycle callstack, and a {@link LifecycleEvent.AfterEnd} event after it is detached from the lifecycle.
+	 */
+	public void end() {
+		publish(new LifecycleEvent.BeforeEnd(this));
+		CALLSTACK.get().pop();
+		this.parent = null;
+		publish(new LifecycleEvent.AfterEnd(this));
 	}
 
 	private void publish(LifecycleEvent event) {
