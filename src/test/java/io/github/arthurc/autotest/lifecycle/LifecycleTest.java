@@ -95,4 +95,77 @@ class LifecycleTest {
 
 	}
 
+	@Nested
+	class Beginning_a_lifecycle {
+
+		@Spy
+		private TestLifecycle lifecycle = new TestLifecycle();
+
+		@Spy
+		private TestLifecycle other = new TestLifecycle();
+
+		@Test
+		void Publishes_BeforeBegin_and_AfterBegin_events() {
+			lifecycle.begin();
+
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeBegin(lifecycle));
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterBegin(lifecycle));
+		}
+
+		@Test
+		void Throws_an_exception_if_the_lifecycle_is_begun_twice() {
+			lifecycle.begin();
+
+			assertThatThrownBy(lifecycle::begin)
+					.isInstanceOf(IllegalStateException.class)
+					.hasMessage("Lifecycle is already the current lifecycle on the callstack");
+		}
+
+		@Test
+		void Throws_an_exception_if_the_lifecycle_is_has_begun_further_down_in_the_callstack() {
+			lifecycle.begin();
+			other.begin();
+
+			assertThatThrownBy(lifecycle::begin)
+					.isInstanceOf(IllegalStateException.class)
+					.hasMessage("Lifecycle is already the current lifecycle on the callstack");
+		}
+	}
+
+	@Nested
+	class Ending_a_lifecycle {
+
+		@Spy
+		private TestLifecycle lifecycle = new TestLifecycle();
+
+		@Spy
+		private TestLifecycle other = new TestLifecycle();
+
+		@Test
+		void Publishes_BeforeEnd_and_AfterEnd_events() {
+			lifecycle.begin();
+			lifecycle.end();
+
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle));
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
+		}
+
+		@Test
+		void Throws_an_exception_if_the_lifecycle_is_ended_without_being_started() {
+			assertThatThrownBy(lifecycle::end)
+					.isInstanceOf(IllegalStateException.class)
+					.hasMessage("Lifecycle is not the current lifecycle on the callstack");
+		}
+
+		@Test
+		void Throws_an_exception_if_the_lifecycle_is_ended_when_it_is_not_the_current_lifecycle_on_the_callstack() {
+			lifecycle.begin();
+			other.begin();
+
+			assertThatThrownBy(lifecycle::end)
+					.isInstanceOf(IllegalStateException.class)
+					.hasMessage("Lifecycle is not the current lifecycle on the callstack");
+		}
+	}
+
 }

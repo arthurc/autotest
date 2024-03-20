@@ -46,6 +46,10 @@ public abstract class Lifecycle {
 	 * the lifecycle callstack, and a {@link LifecycleEvent.AfterBegin} event after it is attached to the lifecycle.
 	 */
 	public void begin() {
+		if (!CALLSTACK.get().isEmpty() && this.parent != null) {
+			throw new IllegalStateException("Lifecycle is already the current lifecycle on the callstack");
+		}
+
 		publish(new LifecycleEvent.BeforeBegin(this));
 		this.parent = CALLSTACK.get().peek();
 		CALLSTACK.get().push(this);
@@ -55,8 +59,14 @@ public abstract class Lifecycle {
 	/**
 	 * Ends the lifecycle. This method publishes a {@link LifecycleEvent.BeforeEnd} event before it is detached from the
 	 * lifecycle callstack, and a {@link LifecycleEvent.AfterEnd} event after it is detached from the lifecycle.
+	 *
+	 * @throws IllegalStateException If the lifecycle is not the current lifecycle on the callstack.
 	 */
 	public void end() {
+		if (CALLSTACK.get().peek() != this) {
+			throw new IllegalStateException("Lifecycle is not the current lifecycle on the callstack");
+		}
+
 		publish(new LifecycleEvent.BeforeEnd(this));
 		CALLSTACK.get().pop();
 		this.parent = null;
