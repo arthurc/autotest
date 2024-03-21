@@ -11,6 +11,9 @@ package io.github.arthurc.autotest.lifecycle;
  */
 public class LifecycleException extends RuntimeException {
 
+	public LifecycleException() {
+	}
+
 	public LifecycleException(String message) {
 		super(message);
 	}

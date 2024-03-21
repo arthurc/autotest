@@ -5,8 +5,10 @@ package io.github.arthurc.autotest.lifecycle;
 
 import java.util.Deque;
 import java.util.LinkedList;
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.Consumer;
+import java.util.function.Predicate;
 
 /**
  * A lifecycle is a thread scoped execution of code that has a start and an end.
@@ -30,6 +32,60 @@ public abstract class Lifecycle {
 	private Lifecycle parent;
 
 	/**
+	 * Finds a lifecycle of the specified type and returns it as an {@link Optional}.
+	 * If no lifecycle of the specified type is found, an empty {@link Optional} is returned.
+	 *
+	 * @param type The type of the lifecycle to find.
+	 * @param <T>  The type of the lifecycle.
+	 * @return An {@link Optional} containing the lifecycle if found, otherwise an empty {@link Optional}.
+	 */
+	public static <T extends Lifecycle> Optional<T> find(Class<T> type) {
+		return find(type, t -> true);
+	}
+
+	/**
+	 * Finds a lifecycle of the specified type that satisfies the specified predicate and returns it as an {@link Optional}.
+	 * If no lifecycle of the specified type is found, an empty {@link Optional} is returned.
+	 *
+	 * @param type      The type of the lifecycle to find.
+	 * @param predicate The predicate to satisfy.
+	 * @param <T>       The type of the lifecycle.
+	 * @return An {@link Optional} containing the lifecycle if found, otherwise an empty {@link Optional}.
+	 */
+	public static <T extends Lifecycle> Optional<T> find(Class<T> type, Predicate<T> predicate) {
+		return CALLSTACK.get().stream()
+				.filter(type::isInstance)
+				.map(type::cast)
+				.filter(predicate)
+				.findFirst();
+	}
+
+	/**
+	 * Gets a lifecycle of the specified type. If no lifecycle of the specified type is found, a
+	 * {@link NoSuchLifecycleException} is thrown.
+	 *
+	 * @param type The type of the lifecycle to get.
+	 * @param <T>  The type of the lifecycle.
+	 * @return The lifecycle, never {@code null}.
+	 */
+	public static <T extends Lifecycle> T get(Class<T> type) {
+		return find(type).orElseThrow(NoSuchLifecycleException::new);
+	}
+
+	/**
+	 * Gets a lifecycle of the specified type that satisfies the specified predicate. If no lifecycle of the specified
+	 * type is found, a {@link NoSuchLifecycleException} is thrown.
+	 *
+	 * @param type      The type of the lifecycle to get.
+	 * @param predicate The predicate to satisfy.
+	 * @param <T>       The type of the lifecycle.
+	 * @return The lifecycle, never {@code null}.
+	 */
+	public static <T extends Lifecycle> T get(Class<T> type, Predicate<T> predicate) {
+		return find(type, predicate).orElseThrow(NoSuchLifecycleException::new);
+	}
+
+	/**
 	 * Runs a task within the lifecycle. The lifecycle publishes events before and after the task is run.
 	 *
 	 * @param task The task to run.
@@ -45,6 +101,7 @@ public abstract class Lifecycle {
 	 * Calls an action within the lifecycle. The lifecycle publishes events before and after the action is called along
 	 * with the result of the action.
 	 * .
+	 *
 	 * @param action The action to call.
 	 * @param <T>    The type of the result.
 	 * @return The result of the action.

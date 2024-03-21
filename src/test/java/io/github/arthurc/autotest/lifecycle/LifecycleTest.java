@@ -22,6 +22,9 @@ class TestLifecycle extends Lifecycle {
 	}
 }
 
+class OtherLifecycle extends Lifecycle {
+}
+
 @MockitoSettings
 class LifecycleTest {
 
@@ -253,4 +256,112 @@ class LifecycleTest {
 		}
 	}
 
+	@Nested
+	class Finding_a_lifecycle {
+		@Test
+		void Returns_the_first_lifecycle_of_a_type() {
+			var lifecycle = new TestLifecycle();
+			var task = spy(new Runnable() {
+				@Override
+				public void run() {
+					assertThat(Lifecycle.find(TestLifecycle.class)).hasValue(lifecycle);
+				}
+			});
+
+			lifecycle.run(task);
+
+			verify(task).run();
+		}
+
+		@Test
+		void Returns_an_empty_optional_if_the_callstack_is_empty() {
+			assertThat(Lifecycle.find(TestLifecycle.class)).isEmpty();
+		}
+
+		@Test
+		void Returns_an_empty_optional_if_the_lifecycle_is_not_on_the_callstack() {
+			var lifecycle = new TestLifecycle();
+			var task = spy(new Runnable() {
+				@Override
+				public void run() {
+					assertThat(Lifecycle.find(OtherLifecycle.class)).isEmpty();
+				}
+			});
+
+			lifecycle.run(task);
+
+			verify(task).run();
+		}
+
+		@Test
+		void Returns_the_first_lifecycle_of_a_type_in_a_nested_callstack() {
+			var outer = new TestLifecycle();
+			var inner = new TestLifecycle();
+			var task = spy(new Runnable() {
+				@Override
+				public void run() {
+					assertThat(Lifecycle.find(TestLifecycle.class)).hasValue(inner);
+				}
+			});
+
+			outer.run(() -> inner.run(task));
+
+			verify(task).run();
+		}
+
+		@Test
+		void Returns_empty_optional_if_the_predicates_does_not_match() {
+			var lifecycle = new TestLifecycle();
+			var task = spy(new Runnable() {
+				@Override
+				public void run() {
+					assertThat(Lifecycle.find(TestLifecycle.class, l -> false)).isEmpty();
+				}
+			});
+
+			lifecycle.run(task);
+
+			verify(task).run();
+		}
+	}
+
+	@Nested
+	class Getting_a_lifecycle {
+		@Test
+		void Returns_the_first_lifecycle_of_a_type() {
+			var lifecycle = new TestLifecycle();
+			var task = spy(new Runnable() {
+				@Override
+				public void run() {
+					assertThat(Lifecycle.get(TestLifecycle.class)).isSameAs(lifecycle);
+				}
+			});
+
+			lifecycle.run(task);
+
+			verify(task).run();
+		}
+
+		@Test
+		void Throws_an_exception_if_the_lifecycle_is_not_on_the_callstack() {
+			assertThatThrownBy(() -> Lifecycle.get(TestLifecycle.class))
+					.isInstanceOf(NoSuchLifecycleException.class);
+		}
+
+		@Test
+		void Throws_an_exception_if_the_lifecycle_is_not_on_the_callstack_and_the_predicate_does_not_match() {
+			var lifecycle = new TestLifecycle();
+			var task = spy(new Runnable() {
+				@Override
+				public void run() {
+					assertThatThrownBy(() -> Lifecycle.get(TestLifecycle.class, l -> false))
+							.isInstanceOf(NoSuchLifecycleException.class);
+				}
+			});
+
+			lifecycle.run(task);
+
+			verify(task).run();
+		}
+	}
 }
