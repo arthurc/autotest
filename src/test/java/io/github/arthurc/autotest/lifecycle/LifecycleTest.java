@@ -264,6 +264,20 @@ class LifecycleTest {
 	}
 
 	@Nested
+	class Ending_a_lifecycle_without_a_result {
+		@Mock(answer = Answers.CALLS_REAL_METHODS)
+		private TestLifecycle lifecycle;
+
+		@Test
+		void Calls_end_with_a_void_result() {
+			lifecycle.begin();
+			lifecycle.end();
+
+			verify(lifecycle).end(LifecycleResult.VOID);
+		}
+	}
+
+	@Nested
 	class Finding_a_lifecycle {
 		@Test
 		void Returns_the_first_lifecycle_of_a_type() {

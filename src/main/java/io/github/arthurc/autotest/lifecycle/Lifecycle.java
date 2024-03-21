@@ -156,6 +156,13 @@ public abstract class Lifecycle {
 		publish(new LifecycleEvent.AfterEnd(this));
 	}
 
+	/**
+	 * Ends the lifecycle with a void result. This method is a convenience method for {@link #end(LifecycleResult)}.
+	 */
+	public void end() {
+		end(LifecycleResult.VOID);
+	}
+
 	private void publish(LifecycleEvent event) {
 		try {
 			onLifecycleEvent(event);
