@@ -196,11 +196,9 @@ class LifecycleTest {
 
 		@Test
 		void Can_handle_that_the_lifecycle_event_callback_throws_an_exception() {
-			lenient().doThrow(new RuntimeException()).when(lifecycle).onLifecycleEvent(isA(LifecycleEvent.BeforeBegin.class));
+			doThrow(new RuntimeException()).when(lifecycle).onLifecycleEvent(isA(LifecycleEvent.BeforeBegin.class));
 
-			assertThatThrownBy(lifecycle::begin)
-					.isInstanceOf(LifecycleException.class)
-					.hasSuppressedException(new RuntimeException());
+			lifecycle.begin();
 
 			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeBegin(lifecycle));
 			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterBegin(lifecycle));
@@ -244,15 +242,24 @@ class LifecycleTest {
 
 		@Test
 		void Can_handle_that_the_lifecycle_event_callback_throws_an_exception() {
-			lenient().doThrow(new RuntimeException()).when(lifecycle).onLifecycleEvent(isA(LifecycleEvent.BeforeEnd.class));
+			doThrow(new RuntimeException()).when(lifecycle).onLifecycleEvent(isA(LifecycleEvent.BeforeEnd.class));
 
 			lifecycle.begin();
-			assertThatThrownBy(() -> lifecycle.end(LifecycleResult.VOID))
-					.isInstanceOf(LifecycleException.class)
-					.hasSuppressedException(new RuntimeException());
+			lifecycle.end(LifecycleResult.VOID);
 
 			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle, LifecycleResult.VOID));
 			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.AfterEnd(lifecycle));
+		}
+
+		@Test
+		void Pops_the_lifecycle_from_the_callstack_even_if_an_exception_is_thrown_from_the_lifecycle_callback() {
+			RuntimeException exception = new RuntimeException("Expected");
+			lenient().doThrow(exception).when(other).onLifecycleEvent(isA(LifecycleEvent.BeforeEnd.class));
+
+			lifecycle.run(() -> other.run(() -> {
+			}));
+
+			assertThat(Lifecycle.find(Lifecycle.class)).isEmpty();
 		}
 	}
 

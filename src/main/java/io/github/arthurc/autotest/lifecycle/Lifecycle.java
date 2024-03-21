@@ -7,8 +7,9 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.concurrent.Callable;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * A lifecycle is a thread scoped execution of code that has a start and an end.
@@ -17,6 +18,8 @@ import java.util.function.Predicate;
  * @since 1.0.0
  */
 public abstract class Lifecycle {
+	private static final Logger log = Logger.getLogger(Lifecycle.class.getName());
+
 	private static final ThreadLocal<Deque<Lifecycle>> CALLSTACK = new InheritableThreadLocal<>() {
 		@Override
 		protected Deque<Lifecycle> initialValue() {
@@ -130,15 +133,10 @@ public abstract class Lifecycle {
 			throw new IllegalStateException("Lifecycle is already the current lifecycle on the callstack");
 		}
 
-		LifecycleException exception = new LifecycleException("An exception occurred during lifecycle event publication");
-		publish(new LifecycleEvent.BeforeBegin(this), exception::addSuppressed);
+		publish(new LifecycleEvent.BeforeBegin(this));
 		this.parent = CALLSTACK.get().peek();
 		CALLSTACK.get().push(this);
-		publish(new LifecycleEvent.AfterBegin(this), exception::addSuppressed);
-
-		if (exception.getSuppressed().length > 0) {
-			throw exception;
-		}
+		publish(new LifecycleEvent.AfterBegin(this));
 	}
 
 	/**
@@ -152,29 +150,20 @@ public abstract class Lifecycle {
 			throw new IllegalStateException("Lifecycle is not the current lifecycle on the callstack");
 		}
 
-		LifecycleException exception = new LifecycleException("An exception occurred during lifecycle event publication");
-		publish(new LifecycleEvent.BeforeEnd(this, result), exception::addSuppressed);
+		publish(new LifecycleEvent.BeforeEnd(this, result));
 		CALLSTACK.get().pop();
 		this.parent = null;
-		publish(new LifecycleEvent.AfterEnd(this), exception::addSuppressed);
-
-		if (exception.getSuppressed().length > 0) {
-			throw exception;
-		}
+		publish(new LifecycleEvent.AfterEnd(this));
 	}
 
-	private void publish(LifecycleEvent event, Consumer<RuntimeException> exceptionHandler) {
+	private void publish(LifecycleEvent event) {
 		try {
 			onLifecycleEvent(event);
 		} catch (RuntimeException e) {
-			if (exceptionHandler != null) {
-				exceptionHandler.accept(e);
-			} else {
-				throw e;
-			}
+			log.log(Level.WARNING, "An exception occurred during lifecycle event publication", e);
 		}
 		if (this.parent != null) {
-			this.parent.publish(event, exceptionHandler);
+			this.parent.publish(event);
 		}
 	}
 
