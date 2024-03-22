@@ -10,4 +10,8 @@ allprojects {
 dependencies {
 	optionalApi 'org.springframework.boot:spring-boot-starter'
 	optionalApi 'org.springframework.boot:spring-boot-starter-test'
+	optionalApi 'org.junit.platform:junit-platform-launcher'
+	optionalApi 'org.junit.jupiter:junit-jupiter-api'
+
+	testImplementation 'org.junit.platform:junit-platform-testkit'
 }
