@@ -7,6 +7,7 @@ import io.github.arthurc.autotest.spring.TestContextCleanupExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.core.annotation.AliasFor;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -28,4 +29,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @ExtendWith(TestContextCleanupExtension.class)
 public @interface AutotestTest {
 	String TAG = "io.github.arthurc.autotest";
+
+	@AliasFor(annotation = SpringBootTest.class)
+	Class<?>[] classes() default {};
 }
