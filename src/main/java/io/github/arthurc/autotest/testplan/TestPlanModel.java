@@ -17,4 +17,8 @@ public record TestPlanModel(List<TestModel> tests) {
 	public TestPlanModel() {
 		this(new ArrayList<>());
 	}
+
+	public boolean isEmpty() {
+		return tests().isEmpty();
+	}
 }

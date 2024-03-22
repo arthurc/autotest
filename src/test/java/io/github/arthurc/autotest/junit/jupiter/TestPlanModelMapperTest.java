@@ -1,13 +1,12 @@
 package io.github.arthurc.autotest.junit.jupiter;
 
 import io.github.arthurc.autotest.AutotestTest;
+import io.github.arthurc.autotest.example.ExampleApp;
 import io.github.arthurc.autotest.testplan.TestPlanModel;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.platform.launcher.core.LauncherDiscoveryRequestBuilder;
 import org.junit.platform.launcher.core.LauncherFactory;
-import org.springframework.boot.SpringBootConfiguration;
-import org.springframework.boot.test.context.TestConfiguration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
@@ -68,7 +67,7 @@ class TestPlanModelMapperTest {
 		}
 	}
 
-	@AutotestTest
+	@AutotestTest(classes = ExampleApp.class)
 	static class TestPlanModelMapperTestAutotestExample {
 
 		@Test
@@ -82,7 +81,7 @@ class TestPlanModelMapperTest {
 		void test() {
 		}
 
-		@AutotestTest
+		@AutotestTest(classes = ExampleApp.class)
 		@Nested
 		class NestedAutotestTest {
 
@@ -106,12 +105,6 @@ class TestPlanModelMapperTest {
 			void test() {
 			}
 		}
-	}
-
-
-	@TestConfiguration
-	@SpringBootConfiguration
-	static class TestApplication {
 	}
 
 }
