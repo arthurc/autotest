@@ -1,4 +1,4 @@
-package io.github.arthurc.autotest.junit.jupiter;
+package io.github.arthurc.autotest.testplan.junit.jupiter;
 
 import io.github.arthurc.autotest.AutotestTest;
 import io.github.arthurc.autotest.example.ExampleApp;
@@ -24,7 +24,7 @@ class TestPlanModelMapperTest {
 					.toTestPlanModel();
 
 			assertThat(testPlanModel.tests()).first().satisfies(testModel -> {
-				assertThat(testModel.id().value()).isEqualTo("[engine:junit-jupiter]/[class:io.github.arthurc.autotest.junit.jupiter.TestPlanModelMapperTest$TestPlanModelMapperTestAutotestExample]");
+				assertThat(testModel.id().value()).isEqualTo("[engine:junit-jupiter]/[class:io.github.arthurc.autotest.testplan.junit.jupiter.TestPlanModelMapperTest$TestPlanModelMapperTestAutotestExample]");
 				assertThat(testModel.parentId()).isNull();
 				assertThat(testModel.displayName()).isEqualTo("TestPlanModelMapperTest$TestPlanModelMapperTestAutotestExample");
 				assertThat(testModel.children()).hasSize(1);
@@ -39,8 +39,8 @@ class TestPlanModelMapperTest {
 					.toTestPlanModel();
 
 			assertThat(testPlanModel.tests().getFirst().children()).first().satisfies(testModel -> {
-				assertThat(testModel.id().value()).isEqualTo("[engine:junit-jupiter]/[class:io.github.arthurc.autotest.junit.jupiter.TestPlanModelMapperTest$TestPlanModelMapperTestAutotestExample]/[method:test()]");
-				assertThat(testModel.parentId().value()).isEqualTo("[engine:junit-jupiter]/[class:io.github.arthurc.autotest.junit.jupiter.TestPlanModelMapperTest$TestPlanModelMapperTestAutotestExample]");
+				assertThat(testModel.id().value()).isEqualTo("[engine:junit-jupiter]/[class:io.github.arthurc.autotest.testplan.junit.jupiter.TestPlanModelMapperTest$TestPlanModelMapperTestAutotestExample]/[method:test()]");
+				assertThat(testModel.parentId().value()).isEqualTo("[engine:junit-jupiter]/[class:io.github.arthurc.autotest.testplan.junit.jupiter.TestPlanModelMapperTest$TestPlanModelMapperTestAutotestExample]");
 				assertThat(testModel.displayName()).isEqualTo("test");
 				assertThat(testModel.children()).isEmpty();
 			});

@@ -1,4 +1,4 @@
-package io.github.arthurc.autotest.junit.jupiter;
+package io.github.arthurc.autotest.testplan.junit.jupiter;
 
 import io.github.arthurc.autotest.AutotestTest;
 import io.github.arthurc.autotest.example.ExampleApp;
@@ -13,9 +13,9 @@ import org.junit.platform.launcher.core.LauncherFactory;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.platform.engine.discovery.DiscoverySelectors.selectClass;
 
-class AutotestTestExecutionListenerTest {
+class TestPlanLifecycleTestExecutionListenerTest {
 
-	private final AutotestTestExecutionListener listener = new AutotestTestExecutionListener();
+	private final TestPlanLifecycleTestExecutionListener listener = new TestPlanLifecycleTestExecutionListener();
 
 	@Nested
 	class Starting_a_test_plan_execution {

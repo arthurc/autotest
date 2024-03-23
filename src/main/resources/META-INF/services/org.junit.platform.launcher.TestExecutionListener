@@ -1,1 +1,2 @@
 io.github.arthurc.autotest.junit.jupiter.AutotestTestExecutionListener
+io.github.arthurc.autotest.testplan.junit.jupiter.TestPlanLifecycleTestExecutionListener
