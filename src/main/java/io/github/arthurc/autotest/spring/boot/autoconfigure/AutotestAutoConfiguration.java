@@ -11,9 +11,9 @@ import org.springframework.context.annotation.Configuration;
 @Configuration(proxyBeanMethods = false)
 public class AutotestAutoConfiguration {
 
-	@Bean(initMethod = "begin", destroyMethod = "end")
-	ApplicationContextLifecycle applicationContextLifecycle(ApplicationContext applicationContext) {
-		return new ApplicationContextLifecycle(applicationContext);
+	@Bean
+	ApplicationContextLifecycle.Registrar applicationContextLifecycleRegistrar(ApplicationContext applicationContext) {
+		return new ApplicationContextLifecycle.Registrar(applicationContext);
 	}
 
 }

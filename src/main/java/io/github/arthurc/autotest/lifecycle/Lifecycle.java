@@ -6,6 +6,7 @@ package io.github.arthurc.autotest.lifecycle;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Optional;
+import java.util.ServiceLoader;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -31,6 +32,10 @@ public abstract class Lifecycle {
 			return new LinkedList<>(parentValue);
 		}
 	};
+
+	static {
+		ServiceLoader.load(LifecycleFactory.class).forEach(factory -> factory.createLifecycle().begin());
+	}
 
 	private Lifecycle parent;
 
@@ -147,7 +152,7 @@ public abstract class Lifecycle {
 	 */
 	public void end(LifecycleResult result) {
 		if (CALLSTACK.get().peek() != this) {
-			throw new IllegalStateException("Lifecycle is not the current lifecycle on the callstack");
+			throw new IllegalStateException("Lifecycle is not the current lifecycle on the callstack. Current lifecycle is %s, expected %s.".formatted(CALLSTACK.get().peek().getClass(), getClass()));
 		}
 
 		publish(new LifecycleEvent.BeforeEnd(this, result));

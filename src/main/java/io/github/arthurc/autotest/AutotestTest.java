@@ -6,7 +6,6 @@ package io.github.arthurc.autotest;
 import org.junit.jupiter.api.Tag;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.AliasFor;
-import org.springframework.test.annotation.DirtiesContext;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -25,7 +24,6 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(TYPE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Tag(AutotestTest.TAG)
-@DirtiesContext
 public @interface AutotestTest {
 	String TAG = "io.github.arthurc.autotest";
 

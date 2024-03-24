@@ -227,7 +227,7 @@ class LifecycleTest {
 		void Throws_an_exception_if_the_lifecycle_is_ended_without_being_started() {
 			assertThatThrownBy(() -> lifecycle.end(LifecycleResult.VOID))
 					.isInstanceOf(IllegalStateException.class)
-					.hasMessage("Lifecycle is not the current lifecycle on the callstack");
+					.hasMessage("Lifecycle is not the current lifecycle on the callstack. Current lifecycle is class io.github.arthurc.autotest.lifecycle.TestLifecycle, expected class io.github.arthurc.autotest.lifecycle.TestLifecycle.");
 		}
 
 		@Test
@@ -237,7 +237,7 @@ class LifecycleTest {
 
 			assertThatThrownBy(() -> lifecycle.end(LifecycleResult.VOID))
 					.isInstanceOf(IllegalStateException.class)
-					.hasMessage("Lifecycle is not the current lifecycle on the callstack");
+					.hasMessage("Lifecycle is not the current lifecycle on the callstack. Current lifecycle is class io.github.arthurc.autotest.lifecycle.TestLifecycle, expected class io.github.arthurc.autotest.lifecycle.TestLifecycle.");
 		}
 
 		@Test
@@ -259,7 +259,7 @@ class LifecycleTest {
 			lifecycle.run(() -> other.run(() -> {
 			}));
 
-			assertThat(Lifecycle.find(Lifecycle.class)).isEmpty();
+			assertThat(Lifecycle.find(Lifecycle.class, lifecycle::equals)).isEmpty();
 		}
 	}
 
