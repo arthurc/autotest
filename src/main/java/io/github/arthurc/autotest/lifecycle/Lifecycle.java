@@ -151,8 +151,11 @@ public abstract class Lifecycle {
 	 * @throws IllegalStateException If the lifecycle is not the current lifecycle on the callstack.
 	 */
 	public void end(LifecycleResult result) {
-		if (CALLSTACK.get().peek() != this) {
-			throw new IllegalStateException("Lifecycle is not the current lifecycle on the callstack. Current lifecycle is %s, expected %s.".formatted(CALLSTACK.get().peek().getClass(), getClass()));
+		Lifecycle currentLifecycle = CALLSTACK.get().peek();
+		if (currentLifecycle != this) {
+			throw new IllegalStateException("Lifecycle is not the current lifecycle on the callstack. Current lifecycle is %s, expected %s.".formatted(
+					currentLifecycle != null ? currentLifecycle.getClass() : "null",
+					getClass()));
 		}
 
 		publish(new LifecycleEvent.BeforeEnd(this, result));
