@@ -3,6 +3,7 @@ package io.github.arthurc.autotest.spring.junit.jupiter;
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
 import io.github.arthurc.autotest.spring.TestContextLifecycle;
+import io.github.arthurc.autotest.test.utils.EventCollector;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -12,25 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.assertj.core.api.Assertions.assertThat;
 
 class TestContextLifecycleExtensionTest {
-
-	static class EventCollector extends Lifecycle {
-		private final List<LifecycleEvent> events = new ArrayList<>();
-
-		public List<LifecycleEvent> getEvents() {
-			return events;
-		}
-
-		@Override
-		protected void onLifecycleEvent(LifecycleEvent event) {
-			this.events.add(event);
-		}
-	}
 
 	@Test
 	void Begins_and_ends_the_test_context_lifecycle() {
