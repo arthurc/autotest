@@ -5,7 +5,6 @@ package io.github.arthurc.autotest.spring;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
-import io.github.arthurc.autotest.lifecycle.LifecycleResult;
 import io.github.arthurc.autotest.testplan.TestPlanLifecycle;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -33,13 +32,8 @@ public class ApplicationContextLifecycle extends Lifecycle {
 
 	@Override
 	protected void onLifecycleEvent(LifecycleEvent event) {
-		if (event instanceof LifecycleEvent.BeforeEnd beforeEnd
-				&& beforeEnd.result() instanceof LifecycleResult.Ok result
-				&& this.applicationContext != null
-				&& result.value() != null) {
-			this.applicationContext.getAutowireCapableBeanFactory().autowireBean(result.value());
-		} else if (event instanceof LifecycleEvent.AfterBegin afterBegin
-				&& afterBegin.lifecycle() instanceof TestPlanLifecycle testPlanLifecycle
+		if (event instanceof LifecycleEvent.AfterBegin afterBegin
+				&& afterBegin.lifecycle() instanceof TestPlanLifecycle
 				&& this.applicationContext == null) {
 			new SpringApplicationBuilder(ApplicationContextLifecycleApplication.class).run();
 			Assert.notNull(this.applicationContext, "ApplicationContext was not set");
