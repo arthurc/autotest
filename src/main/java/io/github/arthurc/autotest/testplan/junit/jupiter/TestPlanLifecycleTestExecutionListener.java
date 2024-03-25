@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.junit.jupiter;
+package io.github.arthurc.autotest.testplan.junit.jupiter;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import io.github.arthurc.autotest.testplan.TestPlanLifecycle;
@@ -17,7 +17,7 @@ import org.junit.platform.launcher.TestPlan;
  * @author Arthur Hartwig Carlsson
  * @since 1.0.0
  */
-public class AutotestTestExecutionListener implements TestExecutionListener {
+public class TestPlanLifecycleTestExecutionListener implements TestExecutionListener {
 
 	@Override
 	public void testPlanExecutionStarted(TestPlan testPlan) {
@@ -31,4 +31,5 @@ public class AutotestTestExecutionListener implements TestExecutionListener {
 	public void testPlanExecutionFinished(TestPlan testPlan) {
 		Lifecycle.find(TestPlanLifecycle.class).ifPresent(Lifecycle::end);
 	}
+
 }
