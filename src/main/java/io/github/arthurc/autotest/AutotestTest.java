@@ -4,6 +4,7 @@
 package io.github.arthurc.autotest;
 
 import io.github.arthurc.autotest.spring.junit.jupiter.TestContextLifecycleExtension;
+import io.github.arthurc.autotest.teststage.junit.jupiter.TestStageExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -26,7 +27,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target(TYPE)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Tag(AutotestTest.TAG)
-@ExtendWith(TestContextLifecycleExtension.class)
+@ExtendWith({TestContextLifecycleExtension.class, TestStageExtension.class})
 public @interface AutotestTest {
 	String TAG = "io.github.arthurc.autotest";
 
