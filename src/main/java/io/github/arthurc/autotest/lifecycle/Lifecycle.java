@@ -171,7 +171,7 @@ public abstract class Lifecycle {
 		end(LifecycleResult.VOID);
 	}
 
-	private void publish(LifecycleEvent event) {
+	protected void publish(LifecycleEvent event) {
 		try {
 			onLifecycleEvent(event);
 		} catch (RuntimeException e) {
