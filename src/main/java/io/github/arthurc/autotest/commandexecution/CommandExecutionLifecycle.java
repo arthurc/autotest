@@ -91,6 +91,10 @@ public class CommandExecutionLifecycle<T> extends Lifecycle {
 			return this;
 		}
 
+		public Builder<T> parameter(String tag, String name) {
+			return addParameters(new Parameter(tag, name));
+		}
+
 		public Builder<T> addParameters(Parameter... parameters) {
 			this.parameters.addAll(List.of(parameters));
 			return this;
