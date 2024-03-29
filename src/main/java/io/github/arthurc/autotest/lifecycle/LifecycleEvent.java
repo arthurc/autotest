@@ -9,7 +9,7 @@ package io.github.arthurc.autotest.lifecycle;
  * @author Arthur Hartwig Carlsson
  * @since 1.0.0
  */
-public sealed interface LifecycleEvent {
+public interface LifecycleEvent {
 	/**
 	 * The lifecycle that the event is related to.
 	 *
