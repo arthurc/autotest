@@ -17,6 +17,14 @@ public interface CommandExecutionLifecycleEvent extends LifecycleEvent {
 	 *
 	 * @param lifecycle The lifecycle.
 	 */
-	record ParametersModified(CommandExecutionLifecycle lifecycle) implements CommandExecutionLifecycleEvent {
+	record ParametersModified(CommandExecutionLifecycle<?> lifecycle) implements CommandExecutionLifecycleEvent {
+	}
+
+	/**
+	 * An event that occurs when the subject of a command execution is changed.
+	 *
+	 * @param lifecycle The lifecycle.
+	 */
+	record SubjectChanged(CommandExecutionLifecycle<?> lifecycle) implements CommandExecutionLifecycleEvent {
 	}
 }

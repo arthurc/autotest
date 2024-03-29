@@ -8,6 +8,8 @@ import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 /**
@@ -16,41 +18,19 @@ import java.util.stream.Stream;
  * @author Arthur Hartwig Carlsson
  * @since 1.0.0
  */
-public class CommandExecutionLifecycle extends Lifecycle {
+public class CommandExecutionLifecycle<T> extends Lifecycle {
 	private final String name;
 	private final List<Parameter> parameters = new ArrayList<>();
+	private Subject<T> subject;
 
-	/**
-	 * Creates a new command lifecycle with the specified name and no parameters.
-	 *
-	 * @param name The name of the command.
-	 */
-	public CommandExecutionLifecycle(String name) {
-		this(name, List.of());
+	private CommandExecutionLifecycle(Builder<T> builder) {
+		this.name = Objects.requireNonNull(builder.name, "name has to be set");
+		this.parameters.addAll(builder.parameters);
+		this.subject = new Subject<>(builder.subject);
 	}
 
-	/**
-	 * Creates a new command lifecycle with the specified name and parameters.
-	 *
-	 * @param name       The name of the command.
-	 * @param parameters The parameters of the command.
-	 */
-	public CommandExecutionLifecycle(String name, List<Parameter> parameters) {
-		this.name = name;
-		this.parameters.addAll(parameters);
-	}
-
-	/**
-	 * Creates a new command lifecycle with the specified name and parameters.
-	 * This constructor is a convenience constructor that takes an array of positional parameters.
-	 *
-	 * @param name       The name of the command.
-	 * @param parameters The parameters of the command.
-	 */
-	public CommandExecutionLifecycle(String name, String[] parameters) {
-		this(name, Stream.of(parameters)
-				.map(Parameter::new)
-				.toList());
+	public static <T> Builder<T> builder() {
+		return new Builder<>();
 	}
 
 	public String getName() {
@@ -67,6 +47,15 @@ public class CommandExecutionLifecycle extends Lifecycle {
 	}
 
 	/**
+	 * Gets the subject of the command.
+	 *
+	 * @return The subject of the command.
+	 */
+	public Optional<T> getSubject() {
+		return Optional.ofNullable(this.subject.subject());
+	}
+
+	/**
 	 * Adds the specified parameters to the list of parameters.
 	 *
 	 * @param parameters The parameters to add.
@@ -80,4 +69,47 @@ public class CommandExecutionLifecycle extends Lifecycle {
 		publish(new CommandExecutionLifecycleEvent.ParametersModified(this));
 	}
 
+	/**
+	 * Sets the subject of the command.
+	 *
+	 * @param subject The subject of the command.
+	 */
+	public void setSubject(T subject) {
+		if (!Objects.equals(this.subject.subject(), subject)) {
+			this.subject = new Subject<>(subject);
+			publish(new CommandExecutionLifecycleEvent.SubjectChanged(this));
+		}
+	}
+
+	public static class Builder<T> {
+		private String name;
+		private final List<Parameter> parameters = new ArrayList<>();
+		private T subject;
+
+		public Builder<T> name(String name) {
+			this.name = name;
+			return this;
+		}
+
+		public Builder<T> addParameters(Parameter... parameters) {
+			this.parameters.addAll(List.of(parameters));
+			return this;
+		}
+
+		public Builder<T> addParameters(String... parameters) {
+			Stream.of(parameters)
+					.map(Parameter::new)
+					.forEach(this.parameters::add);
+			return this;
+		}
+
+		public Builder<T> subject(T subject) {
+			this.subject = subject;
+			return this;
+		}
+
+		public CommandExecutionLifecycle<T> build() {
+			return new CommandExecutionLifecycle<>(this);
+		}
+	}
 }
