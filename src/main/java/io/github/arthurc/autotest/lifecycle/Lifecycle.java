@@ -7,6 +7,7 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.ServiceLoader;
+import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -37,6 +38,7 @@ public abstract class Lifecycle {
 		ServiceLoader.load(LifecycleFactory.class).forEach(factory -> factory.createLifecycle().begin());
 	}
 
+	private final UUID id = UUID.randomUUID();
 	private Lifecycle parent;
 
 	/**
@@ -93,6 +95,9 @@ public abstract class Lifecycle {
 		return find(type, predicate).orElseThrow(NoSuchLifecycleException::new);
 	}
 
+	public UUID getId() {
+		return this.id;
+	}
 	/**
 	 * Runs a task within the lifecycle. The lifecycle publishes events before and after the task is run.
 	 *
