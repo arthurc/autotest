@@ -5,7 +5,6 @@ package io.github.arthurc.autotest.lifecycle;
 
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
-import org.mockito.Answers;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoSettings;
@@ -14,7 +13,14 @@ import java.util.concurrent.Callable;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.inOrder;
+import static org.mockito.Mockito.isA;
+import static org.mockito.Mockito.lenient;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 class TestLifecycle extends Lifecycle {
 	@Override
@@ -208,7 +214,7 @@ class LifecycleTest {
 	@Nested
 	class Ending_a_lifecycle {
 
-		@Mock(answer = Answers.CALLS_REAL_METHODS)
+		@Spy
 		private TestLifecycle lifecycle;
 
 		@Spy
@@ -265,7 +271,7 @@ class LifecycleTest {
 
 	@Nested
 	class Ending_a_lifecycle_without_a_result {
-		@Mock(answer = Answers.CALLS_REAL_METHODS)
+		@Spy
 		private TestLifecycle lifecycle;
 
 		@Test

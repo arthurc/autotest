@@ -40,6 +40,7 @@ public abstract class Lifecycle {
 
 	private final UUID id = UUID.randomUUID();
 	private Lifecycle parent;
+	private final Attributes attributes = new Attributes();
 
 	/**
 	 * Finds a lifecycle of the specified type and returns it as an {@link Optional}.
@@ -98,6 +99,48 @@ public abstract class Lifecycle {
 	public UUID getId() {
 		return this.id;
 	}
+
+	/**
+	 * Gets an attribute from the lifecycle.
+	 *
+	 * @param name The name of the attribute.
+	 * @return The attribute, or {@code null} if the attribute does not exist.
+	 */
+	public Object getAttribute(String name) {
+		return this.attributes.getAttribute(name);
+	}
+
+	/**
+	 * Sets an attribute on the lifecycle.
+	 *
+	 * @param name  The name of the attribute.
+	 * @param value The attribute value.
+	 */
+	public void setAttribute(String name, Object value) {
+		this.attributes.setAttribute(name, value);
+	}
+
+	/**
+	 * Removes an attribute from the lifecycle.
+	 *
+	 * @param name The name of the attribute.
+	 * @return The removed attribute value, or {@code null} if the attribute did not exist.
+	 */
+	public Object removeAttribute(String name) {
+		return this.attributes.removeAttribute(name);
+	}
+
+	/**
+	 * Registers a destruction callback on the lifecycle.
+	 * This callback will be executed when the lifecycle ends.
+	 *
+	 * @param name     The name of the callback.
+	 * @param callback The callback to register.
+	 */
+	public void registerDestructionCallback(String name, Runnable callback) {
+		this.attributes.registerDestructionCallback(name, callback);
+	}
+
 	/**
 	 * Runs a task within the lifecycle. The lifecycle publishes events before and after the task is run.
 	 *
@@ -143,10 +186,12 @@ public abstract class Lifecycle {
 			throw new IllegalStateException("Lifecycle is already the current lifecycle on the callstack");
 		}
 
-		publish(new LifecycleEvent.BeforeBegin(this));
-		this.parent = CALLSTACK.get().peek();
-		CALLSTACK.get().push(this);
-		publish(new LifecycleEvent.AfterBegin(this));
+		synchronized (this) {
+			publish(new LifecycleEvent.BeforeBegin(this));
+			this.parent = CALLSTACK.get().peek();
+			CALLSTACK.get().push(this);
+			publish(new LifecycleEvent.AfterBegin(this));
+		}
 	}
 
 	/**
@@ -163,10 +208,13 @@ public abstract class Lifecycle {
 					getClass()));
 		}
 
-		publish(new LifecycleEvent.BeforeEnd(this, result));
-		CALLSTACK.get().pop();
-		this.parent = null;
-		publish(new LifecycleEvent.AfterEnd(this));
+		synchronized (this) {
+			publish(new LifecycleEvent.BeforeEnd(this, result));
+			this.attributes.executeDestructionCallbacks();
+			CALLSTACK.get().pop();
+			this.parent = null;
+			publish(new LifecycleEvent.AfterEnd(this));
+		}
 	}
 
 	/**
