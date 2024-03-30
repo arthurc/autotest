@@ -3,21 +3,25 @@
  */
 package io.github.arthurc.example.autotest.google;
 
-import io.github.arthurc.autotest.AutotestScoped;
-import jakarta.annotation.PreDestroy;
+import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
+import io.github.arthurc.autotest.web.Browser;
 import org.springframework.stereotype.Component;
 
 @Component
-@AutotestScoped
 public class GooglePage {
 
-	@PreDestroy
-	void destroy() {
-		System.out.println("Destroying GooglePage");
+	private final Browser browser;
+
+	public GooglePage(Browser browser) {
+		this.browser = browser;
 	}
 
-	public String search(String keyword) {
-		return "Search: " + keyword;
+	public void search(String keyword) {
+		CommandExecutionLifecycle.builder()
+				.name("search")
+				.parameter("keyword", keyword)
+				.build()
+				.run(() -> this.browser.visit("/"));
 	}
 
 }
