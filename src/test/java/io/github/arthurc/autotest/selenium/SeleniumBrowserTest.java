@@ -117,4 +117,23 @@ class SeleniumBrowserTest {
 				.hasMessage("Element not found: selector");
 	}
 
+	@Test
+	void getFocusedShouldReturnFocusedElement() {
+		when(this.webDriver.switchTo()).thenReturn(mock(Answers.RETURNS_MOCKS));
+
+		Element element = this.seleniumBrowser.getFocused();
+
+		assertThat(element).isNotNull();
+	}
+
+	@Test
+	void getFocusedShouldThrowAnExceptionIfNoElementIsFocused() {
+		when(this.webDriver.switchTo()).thenReturn(mock());
+		when(this.webDriver.switchTo().activeElement()).thenThrow(new NoSuchElementException("foo"));
+
+		assertThatThrownBy(() -> this.seleniumBrowser.getFocused())
+				.isInstanceOf(ElementNotFoundException.class)
+				.hasMessage("No focused element found");
+	}
+
 }

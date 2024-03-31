@@ -14,4 +14,18 @@ public interface Element {
 	 * Performs a click on the element. This is equivalent to clicking the element with a mouse.
 	 */
 	void click();
+
+	/**
+	 * Enters the specified text into the element. This is equivalent to typing the text into the element.
+	 *
+	 * @param text The text to enter.
+	 */
+	void type(String text);
+
+	/**
+	 * Gets the text of the element.
+	 *
+	 * @return The text of the element.
+	 */
+	String getText();
 }

@@ -6,15 +6,11 @@ package io.github.arthurc.autotest.selenium;
 import io.github.arthurc.autotest.web.AbstractBrowser;
 import io.github.arthurc.autotest.web.BaseUrl;
 import io.github.arthurc.autotest.web.Element;
-import io.github.arthurc.autotest.web.ElementNotFoundException;
-import org.awaitility.core.ConditionTimeoutException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
 
-import java.util.Objects;
-
-import static org.awaitility.Awaitility.await;
+import java.util.Optional;
 
 public class SeleniumBrowser extends AbstractBrowser implements AutoCloseable {
 	private final WebDriver webDriver;
@@ -35,13 +31,20 @@ public class SeleniumBrowser extends AbstractBrowser implements AutoCloseable {
 	}
 
 	@Override
-	protected Element doFind(String selector) {
+	protected Optional<Element> doQuery(String selector) {
 		try {
-			return new SeleniumElement(await()
-					.ignoreException(NoSuchElementException.class)
-					.until(() -> this.webDriver.findElement(By.cssSelector(selector)), Objects::nonNull));
-		} catch (ConditionTimeoutException e) {
-			throw new ElementNotFoundException("Element not found: " + selector);
+			return Optional.of(new SeleniumElement(this.webDriver.findElement(By.cssSelector(selector))));
+		} catch (NoSuchElementException e) {
+			return Optional.empty();
+		}
+	}
+
+	@Override
+	protected Optional<Element> doQueryFocused() {
+		try {
+			return Optional.of(new SeleniumElement(this.webDriver.switchTo().activeElement()));
+		} catch (NoSuchElementException e) {
+			return Optional.empty();
 		}
 	}
 

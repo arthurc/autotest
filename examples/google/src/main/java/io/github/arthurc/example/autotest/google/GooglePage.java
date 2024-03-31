@@ -7,6 +7,8 @@ import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
 import io.github.arthurc.autotest.web.Browser;
 import org.springframework.stereotype.Component;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 @Component
 public class GooglePage {
 
@@ -21,12 +23,21 @@ public class GooglePage {
 				.name("search")
 				.parameter("keyword", keyword)
 				.build()
-				.run(this::doSearch);
+				.run(() -> doSearch(keyword));
 	}
 
-	private void doSearch() {
+	private void doSearch(String text) {
 		this.browser.visit("/");
-		this.browser.find("[aria-modal=\"true\"] button").click();
+		this.browser.query("[aria-modal=\"true\"]").ifPresent(element -> {
+			element.type("{tab}");
+			this.browser.getFocused().type("{tab}");
+			this.browser.getFocused().type("{tab}");
+			this.browser.getFocused().type("{tab}");
+			this.browser.getFocused().click();
+		});
+		this.browser.find("[autofocus]").type(text + "{enter}");
+
+		assertThat(this.browser.find("h3").getText()).containsIgnoringCase(text);
 	}
 
 }
