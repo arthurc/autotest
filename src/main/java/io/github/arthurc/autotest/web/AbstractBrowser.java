@@ -4,8 +4,12 @@
 package io.github.arthurc.autotest.web;
 
 import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
+import org.awaitility.core.ConditionTimeoutException;
 
 import java.util.Objects;
+import java.util.Optional;
+
+import static org.awaitility.Awaitility.await;
 
 /**
  * An abstract browser that provides a base implementation for browsers.
@@ -31,7 +35,7 @@ public abstract class AbstractBrowser implements Browser {
 				.parameter("url", resolvedUrl)
 				.subject(this)
 				.build()
-				.run(lifecycle -> doVisit(resolvedUrl));
+				.run(() -> doVisit(resolvedUrl));
 	}
 
 	@Override
@@ -48,8 +52,49 @@ public abstract class AbstractBrowser implements Browser {
 				});
 	}
 
+	@Override
+	public Optional<Element> query(String selector) {
+		return CommandExecutionLifecycle.builder()
+				.name("get")
+				.parameter("css", selector)
+				.subject(this)
+				.build()
+				.call(lifecycle -> {
+					var element = doQuery(selector);
+					element.ifPresent(lifecycle::setSubject);
+					return element;
+				});
+	}
+
+	@Override
+	public Element getFocused() {
+		return CommandExecutionLifecycle.builder()
+				.name("get-focused")
+				.subject(this)
+				.build()
+				.call(lifecycle -> {
+					var element = doGetFocused();
+					lifecycle.setSubject(element);
+					return element;
+				});
+	}
+
 	protected abstract void doVisit(String url);
 
-	protected abstract Element doFind(String selector);
+	protected abstract Optional<Element> doQuery(String selector);
+
+	protected abstract Optional<Element> doQueryFocused();
+
+	protected Element doGetFocused() {
+		return doQueryFocused().orElseThrow(() -> new ElementNotFoundException("No focused element found"));
+	}
+
+	protected Element doFind(String selector) {
+		try {
+			return await().until(() -> doQuery(selector).orElse(null), Objects::nonNull);
+		} catch (ConditionTimeoutException e) {
+			throw new ElementNotFoundException("Element not found: " + selector);
+		}
+	}
 
 }

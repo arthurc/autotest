@@ -3,6 +3,8 @@
  */
 package io.github.arthurc.autotest.web;
 
+import java.util.Optional;
+
 /**
  * A browser is an abstraction of a web browser.
  *
@@ -26,4 +28,20 @@ public interface Browser {
 	 * @throws ElementNotFoundException If no element is found.
 	 */
 	Element find(String selector);
+
+	/**
+	 * Queries for an element by the specified CSS selector. If no element is found, an empty optional is returned.
+	 *
+	 * @param selector The CSS selector to query for.
+	 * @return An optional containing the element if it was found.
+	 */
+	Optional<Element> query(String selector);
+
+	/**
+	 * Gets the element that currently has focus. If no element has focus, a {@link ElementNotFoundException} is thrown.
+	 *
+	 * @return The element that currently has focus.
+	 * @throws ElementNotFoundException If no element has focus.
+	 */
+	Element getFocused();
 }

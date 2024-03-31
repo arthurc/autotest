@@ -22,5 +22,17 @@ public abstract class AbstractElement implements Element {
 				.run(this::doClick);
 	}
 
+	@Override
+	public void type(String text) {
+		CommandExecutionLifecycle.builder()
+				.name("type")
+				.parameter("text", text)
+				.subject(this)
+				.build()
+				.run(() -> doType(text));
+	}
+
 	protected abstract void doClick();
+
+	protected abstract void doType(String text);
 }

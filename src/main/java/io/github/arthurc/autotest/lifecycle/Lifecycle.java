@@ -167,10 +167,10 @@ public abstract class Lifecycle {
 			var value = action.call();
 			end(new LifecycleResult.Ok(value));
 			return value;
-		} catch (RuntimeException e) {
+		} catch (RuntimeException | Error e) {
 			end(new LifecycleResult.Error(e));
 			throw e;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			end(new LifecycleResult.Error(e));
 			throw new LifecycleException("An exception occurred during the lifecycle action", e);
 		}
