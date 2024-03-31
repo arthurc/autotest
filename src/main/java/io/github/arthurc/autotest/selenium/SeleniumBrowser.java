@@ -3,7 +3,6 @@
  */
 package io.github.arthurc.autotest.selenium;
 
-import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
 import io.github.arthurc.autotest.web.AbstractBrowser;
 import io.github.arthurc.autotest.web.BaseUrl;
 import io.github.arthurc.autotest.web.Element;
@@ -12,7 +11,6 @@ import org.awaitility.core.ConditionTimeoutException;
 import org.openqa.selenium.By;
 import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
 
 import java.util.Objects;
 
@@ -32,24 +30,19 @@ public class SeleniumBrowser extends AbstractBrowser implements AutoCloseable {
 	}
 
 	@Override
-	protected void doVisit(CommandExecutionLifecycle lifecycle, String url) {
+	protected void doVisit(String url) {
 		this.webDriver.navigate().to(url);
 	}
 
 	@Override
-	protected Element doFind(CommandExecutionLifecycle lifecycle, String selector) {
-		WebElement webElement;
+	protected Element doFind(String selector) {
 		try {
-			webElement = await()
+			return new SeleniumElement(await()
 					.ignoreException(NoSuchElementException.class)
-					.until(() -> this.webDriver.findElement(By.cssSelector(selector)), Objects::nonNull);
+					.until(() -> this.webDriver.findElement(By.cssSelector(selector)), Objects::nonNull));
 		} catch (ConditionTimeoutException e) {
 			throw new ElementNotFoundException("Element not found: " + selector);
 		}
-
-		var element = new SeleniumElement(webElement);
-		lifecycle.setSubject(element);
-		return element;
 	}
 
 	@Override

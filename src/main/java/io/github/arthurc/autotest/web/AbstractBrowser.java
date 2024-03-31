@@ -31,7 +31,7 @@ public abstract class AbstractBrowser implements Browser {
 				.parameter("url", resolvedUrl)
 				.subject(this)
 				.build()
-				.run(lifecycle -> doVisit(lifecycle, resolvedUrl));
+				.run(lifecycle -> doVisit(resolvedUrl));
 	}
 
 	@Override
@@ -39,12 +39,17 @@ public abstract class AbstractBrowser implements Browser {
 		return CommandExecutionLifecycle.builder()
 				.name("find")
 				.parameter("css", selector)
+				.subject(this)
 				.build()
-				.call(lifecycle -> doFind(lifecycle, selector));
+				.call(lifecycle -> {
+					var element = doFind(selector);
+					lifecycle.setSubject(element);
+					return element;
+				});
 	}
 
-	protected abstract void doVisit(CommandExecutionLifecycle lifecycle, String url);
+	protected abstract void doVisit(String url);
 
-	protected abstract Element doFind(CommandExecutionLifecycle lifecycle, String selector);
+	protected abstract Element doFind(String selector);
 
 }
