@@ -10,6 +10,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.function.Consumer;
+import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
@@ -79,6 +81,14 @@ public class CommandExecutionLifecycle extends Lifecycle {
 			this.subject = subject;
 			publish(new CommandExecutionLifecycleEvent.SubjectChanged(this));
 		}
+	}
+
+	public void run(Consumer<CommandExecutionLifecycle> c) {
+		run(() -> c.accept(this));
+	}
+
+	public <T> T call(Function<CommandExecutionLifecycle, T> f) {
+		return call(() -> f.apply(this));
 	}
 
 	public static class Builder {

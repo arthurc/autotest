@@ -74,7 +74,7 @@ class CommandExecutionLifecycleTest {
 			lifecycle.addParameters(new Parameter("value"));
 
 			eventCollector.run(() ->
-					lifecycle.run(lifecycle::addParameters));
+					lifecycle.run(() -> lifecycle.addParameters()));
 
 			assertThat(eventCollector.getEvents()).doesNotHaveAnyElementsOfTypes(CommandExecutionLifecycleEvent.class);
 		}
