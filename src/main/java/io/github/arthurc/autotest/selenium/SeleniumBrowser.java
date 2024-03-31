@@ -4,8 +4,8 @@
 package io.github.arthurc.autotest.selenium;
 
 import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
+import io.github.arthurc.autotest.web.AbstractBrowser;
 import io.github.arthurc.autotest.web.BaseUrl;
-import io.github.arthurc.autotest.web.Browser;
 import io.github.arthurc.autotest.web.Element;
 import io.github.arthurc.autotest.web.ElementNotFoundException;
 import org.awaitility.core.ConditionTimeoutException;
@@ -18,13 +18,13 @@ import java.util.Objects;
 
 import static org.awaitility.Awaitility.await;
 
-public class SeleniumBrowser implements Browser, AutoCloseable {
+public class SeleniumBrowser extends AbstractBrowser implements AutoCloseable {
 	private final WebDriver webDriver;
-	private final BaseUrl baseUrl;
 
 	private SeleniumBrowser(Builder builder) {
+		super(builder.baseUrl);
+
 		this.webDriver = builder.webDriver;
-		this.baseUrl = builder.baseUrl;
 	}
 
 	public static Builder builder() {
@@ -32,30 +32,12 @@ public class SeleniumBrowser implements Browser, AutoCloseable {
 	}
 
 	@Override
-	public void visit(String url) {
-		Objects.requireNonNull(url, "Url needs to be provided");
-
-		String resolvedUrl = this.baseUrl.resolve(url).toString();
-
-		CommandExecutionLifecycle.builder()
-				.name("visit")
-				.parameter("url", resolvedUrl)
-				.subject(this)
-				.build()
-				.run(() -> this.webDriver.navigate().to(resolvedUrl));
+	protected void doVisit(CommandExecutionLifecycle lifecycle, String url) {
+		this.webDriver.navigate().to(url);
 	}
 
 	@Override
-	public Element find(String selector) {
-		var lifecycle = CommandExecutionLifecycle.builder()
-				.name("find")
-				.parameter("css", selector)
-				.build();
-
-		return lifecycle.call(() -> doFind(selector, lifecycle));
-	}
-
-	private SeleniumElement doFind(String selector, CommandExecutionLifecycle lifecycle) {
+	protected Element doFind(CommandExecutionLifecycle lifecycle, String selector) {
 		WebElement webElement;
 		try {
 			webElement = await()
