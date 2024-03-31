@@ -3,11 +3,10 @@
  */
 package io.github.arthurc.autotest.selenium;
 
-import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
-import io.github.arthurc.autotest.web.Element;
+import io.github.arthurc.autotest.web.AbstractElement;
 import org.openqa.selenium.WebElement;
 
-class SeleniumElement implements Element {
+class SeleniumElement extends AbstractElement {
 	private final WebElement element;
 
 	SeleniumElement(WebElement element) {
@@ -15,11 +14,7 @@ class SeleniumElement implements Element {
 	}
 
 	@Override
-	public void click() {
-		CommandExecutionLifecycle.builder()
-				.name("click")
-				.subject(this)
-				.build()
-				.run(this.element::click);
+	protected void doClick() {
+		this.element.click();
 	}
 }
