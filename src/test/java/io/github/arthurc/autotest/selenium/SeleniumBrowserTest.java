@@ -1,5 +1,6 @@
 package io.github.arthurc.autotest.selenium;
 
+import io.github.arthurc.autotest.test.utils.EventCollector;
 import io.github.arthurc.autotest.web.BaseUrl;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -47,4 +48,16 @@ class SeleniumBrowserTest {
 		verify(this.webDriver).quit();
 	}
 
+	@Test
+	void visitShouldPublishAnEvent() {
+		EventCollector eventCollector = new EventCollector();
+
+		eventCollector.run(() -> this.seleniumBrowser.visit("/foo"));
+
+		assertThat(eventCollector.getEvents()).anyMatch(event -> event instanceof LifecycleEvent.AfterBegin
+				&& event.lifecycle() instanceof CommandExecutionLifecycle command
+				&& command.getName().equals("visit")
+				&& command.getParameters().equals(List.of(new Parameter("url", "https://example.com/foo")))
+				&& command.getSubject().equals(Optional.of(this.seleniumBrowser)));
+	}
 }

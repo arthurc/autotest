@@ -27,12 +27,15 @@ public class SeleniumBrowser implements Browser, AutoCloseable {
 	public void visit(String url) {
 		Objects.requireNonNull(url, "Url needs to be provided");
 
+		String resolvedUrl = this.baseUrl.resolve(url).toString();
+
 		CommandExecutionLifecycle.builder()
 				.name("visit")
-				.parameter("url", url)
+				.parameter("url", resolvedUrl)
 				.subject(this)
 				.build()
 				.run(() -> this.webDriver.navigate().to(this.baseUrl.resolve(url).toString()));
+				.run(() -> this.webDriver.navigate().to(resolvedUrl));
 	}
 
 	@Override
