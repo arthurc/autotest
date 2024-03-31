@@ -16,4 +16,11 @@ public record Parameter(String tag, String value) {
 	public Parameter(String value) {
 		this(null, value);
 	}
+
+	@Override
+	public String toString() {
+		return tag() != null
+				? tag() + ":" + value()
+				: value();
+	}
 }
