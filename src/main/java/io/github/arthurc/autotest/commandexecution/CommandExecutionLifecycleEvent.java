@@ -17,7 +17,7 @@ public interface CommandExecutionLifecycleEvent extends LifecycleEvent {
 	 *
 	 * @param lifecycle The lifecycle.
 	 */
-	record ParametersModified(CommandExecutionLifecycle<?> lifecycle) implements CommandExecutionLifecycleEvent {
+	record ParametersModified(CommandExecutionLifecycle lifecycle) implements CommandExecutionLifecycleEvent {
 	}
 
 	/**
@@ -25,6 +25,6 @@ public interface CommandExecutionLifecycleEvent extends LifecycleEvent {
 	 *
 	 * @param lifecycle The lifecycle.
 	 */
-	record SubjectChanged(CommandExecutionLifecycle<?> lifecycle) implements CommandExecutionLifecycleEvent {
+	record SubjectChanged(CommandExecutionLifecycle lifecycle) implements CommandExecutionLifecycleEvent {
 	}
 }

@@ -18,19 +18,19 @@ import java.util.stream.Stream;
  * @author Arthur Hartwig Carlsson
  * @since 1.0.0
  */
-public class CommandExecutionLifecycle<T> extends Lifecycle {
+public class CommandExecutionLifecycle extends Lifecycle {
 	private final String name;
 	private final List<Parameter> parameters = new ArrayList<>();
-	private Subject<T> subject;
+	private Object subject;
 
-	private CommandExecutionLifecycle(Builder<T> builder) {
+	private CommandExecutionLifecycle(Builder builder) {
 		this.name = Objects.requireNonNull(builder.name, "name has to be set");
 		this.parameters.addAll(builder.parameters);
-		this.subject = new Subject<>(builder.subject);
+		this.subject = builder.subject;
 	}
 
-	public static <T> Builder<T> builder() {
-		return new Builder<>();
+	public static Builder builder() {
+		return new Builder();
 	}
 
 	public String getName() {
@@ -51,8 +51,8 @@ public class CommandExecutionLifecycle<T> extends Lifecycle {
 	 *
 	 * @return The subject of the command.
 	 */
-	public Optional<T> getSubject() {
-		return Optional.ofNullable(this.subject.subject());
+	public Optional<Object> getSubject() {
+		return Optional.ofNullable(this.subject);
 	}
 
 	/**
@@ -74,46 +74,46 @@ public class CommandExecutionLifecycle<T> extends Lifecycle {
 	 *
 	 * @param subject The subject of the command.
 	 */
-	public void setSubject(T subject) {
-		if (!Objects.equals(this.subject.subject(), subject)) {
-			this.subject = new Subject<>(subject);
+	public void setSubject(Object subject) {
+		if (!Objects.equals(this.subject, subject)) {
+			this.subject = subject;
 			publish(new CommandExecutionLifecycleEvent.SubjectChanged(this));
 		}
 	}
 
-	public static class Builder<T> {
+	public static class Builder {
 		private String name;
 		private final List<Parameter> parameters = new ArrayList<>();
-		private T subject;
+		private Object subject;
 
-		public Builder<T> name(String name) {
+		public Builder name(String name) {
 			this.name = name;
 			return this;
 		}
 
-		public Builder<T> parameter(String tag, String name) {
+		public Builder parameter(String tag, String name) {
 			return addParameters(new Parameter(tag, name));
 		}
 
-		public Builder<T> addParameters(Parameter... parameters) {
+		public Builder addParameters(Parameter... parameters) {
 			this.parameters.addAll(List.of(parameters));
 			return this;
 		}
 
-		public Builder<T> addParameters(String... parameters) {
+		public Builder addParameters(String... parameters) {
 			Stream.of(parameters)
 					.map(Parameter::new)
 					.forEach(this.parameters::add);
 			return this;
 		}
 
-		public Builder<T> subject(T subject) {
+		public Builder subject(Object subject) {
 			this.subject = subject;
 			return this;
 		}
 
-		public CommandExecutionLifecycle<T> build() {
-			return new CommandExecutionLifecycle<>(this);
+		public CommandExecutionLifecycle build() {
+			return new CommandExecutionLifecycle(this);
 		}
 	}
 }
