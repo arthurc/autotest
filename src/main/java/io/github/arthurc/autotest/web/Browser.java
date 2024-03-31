@@ -17,4 +17,13 @@ public interface Browser {
 	 * @throws NullPointerException If the URL is null.
 	 */
 	void visit(String url);
+
+	/**
+	 * Finds an element by the specified CSS selector. If no element is found, an {@link ElementNotFoundException} is thrown.
+	 *
+	 * @param selector The CSS selector to find the element by.
+	 * @return A reference to the element.
+	 * @throws ElementNotFoundException If no element is found.
+	 */
+	Element find(String selector);
 }

@@ -21,7 +21,12 @@ public class GooglePage {
 				.name("search")
 				.parameter("keyword", keyword)
 				.build()
-				.run(() -> this.browser.visit("/"));
+				.run(this::doSearch);
+	}
+
+	private void doSearch() {
+		this.browser.visit("/");
+		this.browser.find("[aria-modal=\"true\"] button").click();
 	}
 
 }

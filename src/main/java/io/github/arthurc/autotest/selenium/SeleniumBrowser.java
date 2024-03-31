@@ -6,9 +6,17 @@ package io.github.arthurc.autotest.selenium;
 import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
 import io.github.arthurc.autotest.web.BaseUrl;
 import io.github.arthurc.autotest.web.Browser;
+import io.github.arthurc.autotest.web.Element;
+import io.github.arthurc.autotest.web.ElementNotFoundException;
+import org.awaitility.core.ConditionTimeoutException;
+import org.openqa.selenium.By;
+import org.openqa.selenium.NoSuchElementException;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 
 import java.util.Objects;
+
+import static org.awaitility.Awaitility.await;
 
 public class SeleniumBrowser implements Browser, AutoCloseable {
 	private final WebDriver webDriver;
@@ -34,8 +42,32 @@ public class SeleniumBrowser implements Browser, AutoCloseable {
 				.parameter("url", resolvedUrl)
 				.subject(this)
 				.build()
-				.run(() -> this.webDriver.navigate().to(this.baseUrl.resolve(url).toString()));
 				.run(() -> this.webDriver.navigate().to(resolvedUrl));
+	}
+
+	@Override
+	public Element find(String selector) {
+		var lifecycle = CommandExecutionLifecycle.builder()
+				.name("find")
+				.parameter("css", selector)
+				.build();
+
+		return lifecycle.call(() -> doFind(selector, lifecycle));
+	}
+
+	private SeleniumElement doFind(String selector, CommandExecutionLifecycle lifecycle) {
+		WebElement webElement;
+		try {
+			webElement = await()
+					.ignoreException(NoSuchElementException.class)
+					.until(() -> this.webDriver.findElement(By.cssSelector(selector)), Objects::nonNull);
+		} catch (ConditionTimeoutException e) {
+			throw new ElementNotFoundException("Element not found: " + selector);
+		}
+
+		var element = new SeleniumElement(webElement);
+		lifecycle.setSubject(element);
+		return element;
 	}
 
 	@Override
