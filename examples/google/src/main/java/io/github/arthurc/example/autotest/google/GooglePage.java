@@ -3,6 +3,7 @@
  */
 package io.github.arthurc.example.autotest.google;
 
+import io.github.arthurc.autotest.AutotestScoped;
 import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
 import io.github.arthurc.autotest.web.Browser;
 import org.springframework.stereotype.Component;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Component;
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Component
+@AutotestScoped
 public class GooglePage {
 
 	private final Browser browser;
@@ -37,7 +39,7 @@ public class GooglePage {
 		});
 		this.browser.find("[autofocus]").type(text + "{enter}");
 
-		assertThat(this.browser.find("h3").getText()).containsIgnoringCase(text);
+		assertThat(this.browser.find("h3")).containsText(text);
 	}
 
 }
