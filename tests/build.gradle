@@ -4,10 +4,9 @@ plugins {
     id 'org.springframework.boot'
 }
 
-group = 'io.github.arthurc.example.autotest'
-
 dependencies {
     implementation project(':starters:spring-boot-starter-autotest')
+    implementation libs.wiremock.standalone
 }
 
 tasks.register("autotest", Test) {
@@ -17,4 +16,8 @@ tasks.register("autotest", Test) {
 
     testClassesDirs = sourceSets.main.output.classesDirs
     classpath = sourceSets.main.runtimeClasspath
+}
+
+tasks.named("check").configure {
+    dependsOn('autotest')
 }
