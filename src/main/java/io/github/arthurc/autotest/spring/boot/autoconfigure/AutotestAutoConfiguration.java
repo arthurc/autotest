@@ -47,11 +47,8 @@ public class AutotestAutoConfiguration {
 		@Bean
 		@ConditionalOnMissingBean
 		ChromeOptions chromeOptions(ChromeOptionsProperties properties) {
-			ChromeOptions chromeOptions = new ChromeOptions()
-					.addArguments(properties.getArguments());
-			if (properties.getBinary() != null) {
-				chromeOptions.setBinary(properties.getBinary());
-			}
+			ChromeOptions chromeOptions = new ChromeOptions();
+			properties.toChromeOptions(chromeOptions);
 			return chromeOptions;
 		}
 	}
