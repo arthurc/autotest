@@ -28,4 +28,20 @@ public abstract class AbstractElementAssert<SELF extends AbstractElementAssert<S
 		strings.assertContainsIgnoringCase(info, actual.getText(), text);
 		return myself;
 	}
+
+	/**
+	 * Asserts that the element does not contain the specified text. The text is case-insensitive.
+	 * <p>
+	 * Example:
+	 * <pre><code class='java'> // assertion succeeds
+	 * assertThat(browser.find("h1"))
+	 *     .doesNotContainText(&quot;Goodbye, world!&quot;);</code></pre>
+	 *
+	 * @param text The text to assert.
+	 * @return {@code this} assertion object.
+	 */
+	public SELF doesNotContainText(String text) {
+		strings.assertDoesNotContainIgnoringCase(info, actual.getText(), text);
+		return myself;
+	}
 }
