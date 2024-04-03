@@ -12,6 +12,9 @@ jobs:
     permissions:
       contents: read
 
+    env:
+      SPRING_PROFILES_INCLUDE: ci
+
     steps:
     - uses: actions/checkout@v4
     - name: Set up JDK 21

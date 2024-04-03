@@ -156,7 +156,6 @@ public abstract class Lifecycle {
 	/**
 	 * Calls an action within the lifecycle. The lifecycle publishes events before and after the action is called along
 	 * with the result of the action.
-	 * .
 	 *
 	 * @param action The action to call.
 	 * @param <T>    The type of the result.
@@ -168,10 +167,10 @@ public abstract class Lifecycle {
 			var value = action.call();
 			end(new LifecycleResult.Ok(value));
 			return value;
-		} catch (RuntimeException e) {
+		} catch (RuntimeException | Error e) {
 			end(new LifecycleResult.Error(e));
 			throw e;
-		} catch (Exception e) {
+		} catch (Throwable e) {
 			end(new LifecycleResult.Error(e));
 			throw new LifecycleException("An exception occurred during the lifecycle action", e);
 		}

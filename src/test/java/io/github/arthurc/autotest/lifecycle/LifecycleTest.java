@@ -96,11 +96,13 @@ class LifecycleTest {
 
 		@Test
 		void Throws_checked_exceptions_as_a_LifecycleException() throws Exception {
-			doThrow(new Exception("Foo")).when(action).call();
+			Exception exception = new Exception("Foo");
+			doThrow(exception).when(action).call();
 
 			assertThatThrownBy(() -> lifecycle.call(action))
 					.isInstanceOf(LifecycleException.class)
 					.hasMessage("An exception occurred during the lifecycle action");
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle, new LifecycleResult.Error(exception)));
 		}
 
 		@Test
@@ -109,7 +111,18 @@ class LifecycleTest {
 			doThrow(exception).when(action).call();
 
 			assertThatThrownBy(() -> lifecycle.call(action)).isEqualTo(exception);
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle, new LifecycleResult.Error(exception)));
 		}
+
+		@Test
+		void Rethrows_errors() throws Exception {
+			AssertionError exception = new AssertionError();
+			doThrow(exception).when(action).call();
+
+			assertThatThrownBy(() -> lifecycle.call(action)).isEqualTo(exception);
+			verify(lifecycle).onLifecycleEvent(new LifecycleEvent.BeforeEnd(lifecycle, new LifecycleResult.Error(exception)));
+		}
+
 
 		@Test
 		void Propagates_the_result_of_the_action_via_the_lifecycle_events() throws Exception {

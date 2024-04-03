@@ -9,3 +9,12 @@ group = 'io.github.arthurc.example.autotest'
 dependencies {
     implementation project(':starters:spring-boot-starter-autotest')
 }
+
+tasks.register("autotest", Test) {
+    useJUnitPlatform()
+    description = "Run autotests"
+    group = "verification"
+
+    testClassesDirs = sourceSets.main.output.classesDirs
+    classpath = sourceSets.main.runtimeClasspath
+}

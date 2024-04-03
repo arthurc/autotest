@@ -1,0 +1,4 @@
+example:
+  google:
+    browser:
+      base-url: https://www.google.com

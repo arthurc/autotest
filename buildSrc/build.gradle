@@ -5,6 +5,14 @@ plugins {
 dependencies {
     implementation(libs.spring.boot.gradle.plugin)
     implementation(libs.dependency.management.plugin)
+    constraints {
+        implementation("org.apache.commons:commons-compress") {
+            version {
+                require "1.26.1"
+            }
+            because("CVE-2024-26308 and CVE-2024-25710")
+        }
+    }
 }
 
 repositories {

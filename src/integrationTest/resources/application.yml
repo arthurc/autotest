@@ -1,0 +1,3 @@
+tests:
+  browser:
+    base-url: http://localhost:8090

@@ -1,7 +1,9 @@
 [versions]
 spring-boot = "3.2.4"
 dependency-management = "1.1.4"
+wiremock = "3.5.2"
 
 [libraries]
 spring-boot-gradle-plugin = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "spring-boot" }
 dependency-management-plugin = { module = "io.spring.gradle:dependency-management-plugin", version.ref = "dependency-management" }
+wiremock-standalone = { module = "org.wiremock:wiremock-standalone", version.ref = "wiremock" }

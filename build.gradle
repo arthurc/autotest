@@ -12,6 +12,10 @@ dependencies {
 	optionalApi 'org.springframework.boot:spring-boot-starter-test'
 	optionalApi 'org.junit.platform:junit-platform-launcher'
 	optionalApi 'org.junit.jupiter:junit-jupiter-api'
+	optionalApi 'org.seleniumhq.selenium:selenium-java'
+	optionalApi 'org.awaitility:awaitility'
 
 	testImplementation 'org.junit.platform:junit-platform-testkit'
+
+	integrationTestImplementation libs.wiremock.standalone
 }
