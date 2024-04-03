@@ -7,13 +7,13 @@ import org.junit.jupiter.api.Test;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-class CommandExecutionLifecycleTest {
+class CommandTest {
 
 	@Nested
 	class Creating_a_command_execution_lifecycle {
 		@Test
 		void Requires_a_name() {
-			var builder = CommandExecutionLifecycle.builder();
+			var builder = Command.builder();
 
 			assertThatThrownBy(builder::build)
 					.isInstanceOf(NullPointerException.class)
@@ -22,21 +22,21 @@ class CommandExecutionLifecycleTest {
 
 		@Test
 		void Has_a_name() {
-			var lifecycle = CommandExecutionLifecycle.builder().name("arne").build();
+			var lifecycle = Command.builder().name("arne").build();
 
 			assertThat(lifecycle.getName()).isEqualTo("arne");
 		}
 
 		@Test
 		void Has_no_parameters_by_default() {
-			var lifecycle = CommandExecutionLifecycle.builder().name("arne").build();
+			var lifecycle = Command.builder().name("arne").build();
 
 			assertThat(lifecycle.getParameters()).isEmpty();
 		}
 
 		@Test
 		void Has_no_subject_by_default() {
-			var lifecycle = CommandExecutionLifecycle.builder().name("arne").build();
+			var lifecycle = Command.builder().name("arne").build();
 
 			assertThat(lifecycle.getSubject()).isEmpty();
 		}
@@ -46,7 +46,7 @@ class CommandExecutionLifecycleTest {
 	class Changing_parameters {
 		@Test
 		void Adds_a_parameter_to_the_list_of_parameters() {
-			var lifecycle = CommandExecutionLifecycle.builder().name("arne").build();
+			var lifecycle = Command.builder().name("arne").build();
 
 			lifecycle.addParameters(new Parameter("key", "value"), new Parameter("value"));
 
@@ -58,25 +58,25 @@ class CommandExecutionLifecycleTest {
 		@Test
 		void Publishes_a_ParametersModified_event() {
 			var eventCollector = new EventCollector();
-			var lifecycle = CommandExecutionLifecycle.builder().name("arne").build();
+			var lifecycle = Command.builder().name("arne").build();
 
 			eventCollector.run(() ->
 					lifecycle.run(() ->
 							lifecycle.addParameters(new Parameter("value"))));
 
-			assertThat(eventCollector.getEvents()).contains(new CommandExecutionLifecycleEvent.ParametersModified(lifecycle));
+			assertThat(eventCollector.getEvents()).contains(new CommandEvent.ParametersModified(lifecycle));
 		}
 
 		@Test
 		void Does_not_publish_a_ParametersModified_event_when_parameters_are_not_changed() {
 			var eventCollector = new EventCollector();
-			var lifecycle = CommandExecutionLifecycle.builder().name("arne").build();
+			var lifecycle = Command.builder().name("arne").build();
 			lifecycle.addParameters(new Parameter("value"));
 
 			eventCollector.run(() ->
 					lifecycle.run(() -> lifecycle.addParameters()));
 
-			assertThat(eventCollector.getEvents()).doesNotHaveAnyElementsOfTypes(CommandExecutionLifecycleEvent.class);
+			assertThat(eventCollector.getEvents()).doesNotHaveAnyElementsOfTypes(CommandEvent.class);
 		}
 	}
 
@@ -85,21 +85,21 @@ class CommandExecutionLifecycleTest {
 		@Test
 		void Publishes_a_SubjectChanged_event() {
 			var eventCollector = new EventCollector();
-			var lifecycle = CommandExecutionLifecycle.builder().name("arne").build();
+			var lifecycle = Command.builder().name("arne").build();
 
 			eventCollector.run(() -> lifecycle.run(() -> lifecycle.setSubject("value")));
 
-			assertThat(eventCollector.getEvents()).contains(new CommandExecutionLifecycleEvent.SubjectChanged(lifecycle));
+			assertThat(eventCollector.getEvents()).contains(new CommandEvent.SubjectChanged(lifecycle));
 		}
 
 		@Test
 		void Does_not_publish_a_SubjectChanged_event_when_subject_is_not_changed() {
 			var eventCollector = new EventCollector();
-			var lifecycle = CommandExecutionLifecycle.builder().name("arne").subject("value").build();
+			var lifecycle = Command.builder().name("arne").subject("value").build();
 
 			eventCollector.run(() -> lifecycle.run(() -> lifecycle.setSubject("value")));
 
-			assertThat(eventCollector.getEvents()).doesNotHaveAnyElementsOfTypes(CommandExecutionLifecycleEvent.class);
+			assertThat(eventCollector.getEvents()).doesNotHaveAnyElementsOfTypes(CommandEvent.class);
 		}
 	}
 

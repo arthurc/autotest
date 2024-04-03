@@ -1,6 +1,6 @@
 package io.github.arthurc.autotest.selenium;
 
-import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
+import io.github.arthurc.autotest.commandexecution.Command;
 import io.github.arthurc.autotest.commandexecution.Parameter;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
 import io.github.arthurc.autotest.test.utils.EventCollector;
@@ -76,7 +76,7 @@ class SeleniumBrowserTest {
 		eventCollector.run(() -> this.seleniumBrowser.visit("/foo"));
 
 		assertThat(eventCollector.getEvents()).anyMatch(event -> event instanceof LifecycleEvent.AfterBegin
-				&& event.lifecycle() instanceof CommandExecutionLifecycle command
+				&& event.lifecycle() instanceof Command command
 				&& command.getName().equals("visit")
 				&& command.getParameters().equals(List.of(new Parameter("url", "https://example.com/foo")))
 				&& command.getSubject().equals(Optional.of(this.seleniumBrowser)));
@@ -101,7 +101,7 @@ class SeleniumBrowserTest {
 		eventCollector.run(() -> this.seleniumBrowser.find("selector"));
 
 		assertThat(eventCollector.getEvents()).anyMatch(event -> event instanceof LifecycleEvent.AfterBegin
-				&& event.lifecycle() instanceof CommandExecutionLifecycle command
+				&& event.lifecycle() instanceof Command command
 				&& command.getName().equals("find")
 				&& command.getParameters().equals(List.of(new Parameter("css", "selector"))));
 	}

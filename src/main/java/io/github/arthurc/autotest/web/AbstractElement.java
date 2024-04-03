@@ -3,7 +3,7 @@
  */
 package io.github.arthurc.autotest.web;
 
-import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
+import io.github.arthurc.autotest.commandexecution.Command;
 
 /**
  * An abstract element implementation that provides a default implementation for {@link Element}.
@@ -15,7 +15,7 @@ public abstract class AbstractElement implements Element {
 
 	@Override
 	public void click() {
-		CommandExecutionLifecycle.builder()
+		Command.builder()
 				.name("click")
 				.subject(this)
 				.build()
@@ -24,7 +24,7 @@ public abstract class AbstractElement implements Element {
 
 	@Override
 	public void type(String text) {
-		CommandExecutionLifecycle.builder()
+		Command.builder()
 				.name("type")
 				.parameter("text", text)
 				.subject(this)

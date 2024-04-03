@@ -15,17 +15,17 @@ import java.util.function.Function;
 import java.util.stream.Stream;
 
 /**
- * A command lifecycle is a lifecycle that represents a command that can be executed.
+ * A command is a lifecycle that represents a command that can be executed.
  *
  * @author Arthur Hartwig Carlsson
  * @since 1.0.0
  */
-public class CommandExecutionLifecycle extends Lifecycle {
+public class Command extends Lifecycle {
 	private final String name;
 	private final List<Parameter> parameters = new ArrayList<>();
 	private Object subject;
 
-	private CommandExecutionLifecycle(Builder builder) {
+	private Command(Builder builder) {
 		this.name = Objects.requireNonNull(builder.name, "name has to be set");
 		this.parameters.addAll(builder.parameters);
 		this.subject = builder.subject;
@@ -68,7 +68,7 @@ public class CommandExecutionLifecycle extends Lifecycle {
 		}
 
 		this.parameters.addAll(List.of(parameters));
-		publish(new CommandExecutionLifecycleEvent.ParametersModified(this));
+		publish(new CommandEvent.ParametersModified(this));
 	}
 
 	/**
@@ -79,15 +79,15 @@ public class CommandExecutionLifecycle extends Lifecycle {
 	public void setSubject(Object subject) {
 		if (!Objects.equals(this.subject, subject)) {
 			this.subject = subject;
-			publish(new CommandExecutionLifecycleEvent.SubjectChanged(this));
+			publish(new CommandEvent.SubjectChanged(this));
 		}
 	}
 
-	public void run(Consumer<CommandExecutionLifecycle> c) {
+	public void run(Consumer<Command> c) {
 		run(() -> c.accept(this));
 	}
 
-	public <T> T call(Function<CommandExecutionLifecycle, T> f) {
+	public <T> T call(Function<Command, T> f) {
 		return call(() -> f.apply(this));
 	}
 
@@ -122,8 +122,8 @@ public class CommandExecutionLifecycle extends Lifecycle {
 			return this;
 		}
 
-		public CommandExecutionLifecycle build() {
-			return new CommandExecutionLifecycle(this);
+		public Command build() {
+			return new Command(this);
 		}
 	}
 }

@@ -4,7 +4,7 @@
 package io.github.arthurc.example.autotest.google;
 
 import io.github.arthurc.autotest.AutotestScoped;
-import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
+import io.github.arthurc.autotest.commandexecution.Command;
 import io.github.arthurc.autotest.web.Browser;
 import org.springframework.stereotype.Component;
 
@@ -21,7 +21,7 @@ public class GooglePage {
 	}
 
 	public void search(String keyword) {
-		CommandExecutionLifecycle.builder()
+		Command.builder()
 				.name("search")
 				.parameter("keyword", keyword)
 				.build()

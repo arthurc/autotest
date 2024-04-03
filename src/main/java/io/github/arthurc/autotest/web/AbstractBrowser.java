@@ -3,7 +3,7 @@
  */
 package io.github.arthurc.autotest.web;
 
-import io.github.arthurc.autotest.commandexecution.CommandExecutionLifecycle;
+import io.github.arthurc.autotest.commandexecution.Command;
 import org.awaitility.core.ConditionTimeoutException;
 
 import java.util.Objects;
@@ -30,7 +30,7 @@ public abstract class AbstractBrowser implements Browser {
 
 		String resolvedUrl = this.baseUrl.resolve(url).toString();
 
-		CommandExecutionLifecycle.builder()
+		Command.builder()
 				.name("visit")
 				.parameter("url", resolvedUrl)
 				.subject(this)
@@ -40,7 +40,7 @@ public abstract class AbstractBrowser implements Browser {
 
 	@Override
 	public Element find(String selector) {
-		return CommandExecutionLifecycle.builder()
+		return Command.builder()
 				.name("find")
 				.parameter("css", selector)
 				.subject(this)
@@ -54,7 +54,7 @@ public abstract class AbstractBrowser implements Browser {
 
 	@Override
 	public Optional<Element> query(String selector) {
-		return CommandExecutionLifecycle.builder()
+		return Command.builder()
 				.name("get")
 				.parameter("css", selector)
 				.subject(this)
@@ -68,7 +68,7 @@ public abstract class AbstractBrowser implements Browser {
 
 	@Override
 	public Element getFocused() {
-		return CommandExecutionLifecycle.builder()
+		return Command.builder()
 				.name("get-focused")
 				.subject(this)
 				.build()
