@@ -5,14 +5,13 @@ package io.github.arthurc.autotest.command;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Consumer;
 import java.util.function.Function;
-import java.util.stream.Stream;
 
 /**
  * A command is a lifecycle that represents a command that can be executed.
@@ -22,12 +21,12 @@ import java.util.stream.Stream;
  */
 public class Command extends Lifecycle {
 	private final String name;
-	private final List<Parameter> parameters = new ArrayList<>();
+	private final Map<String, String> parameters = new LinkedHashMap<>();
 	private Object subject;
 
 	private Command(Builder builder) {
 		this.name = Objects.requireNonNull(builder.name, "name has to be set");
-		this.parameters.addAll(builder.parameters);
+		this.parameters.putAll(builder.parameters);
 		this.subject = builder.subject;
 	}
 
@@ -44,8 +43,8 @@ public class Command extends Lifecycle {
 	 *
 	 * @return The parameters of the command.
 	 */
-	public List<Parameter> getParameters() {
-		return Collections.unmodifiableList(this.parameters);
+	public Map<String, String> getParameters() {
+		return Collections.unmodifiableMap(this.parameters);
 	}
 
 	/**
@@ -62,12 +61,12 @@ public class Command extends Lifecycle {
 	 *
 	 * @param parameters The parameters to add.
 	 */
-	public void addParameters(Parameter... parameters) {
-		if (parameters == null || parameters.length == 0) {
+	public void addParameters(Map<String, String> parameters) {
+		if (parameters == null || parameters.isEmpty()) {
 			return;
 		}
 
-		this.parameters.addAll(List.of(parameters));
+		this.parameters.putAll(parameters);
 		publish(new CommandEvent.ParametersModified(this));
 	}
 
@@ -93,7 +92,7 @@ public class Command extends Lifecycle {
 
 	public static class Builder {
 		private String name;
-		private final List<Parameter> parameters = new ArrayList<>();
+		private final Map<String, String> parameters = new LinkedHashMap<>();
 		private Object subject;
 
 		public Builder name(String name) {
@@ -102,18 +101,11 @@ public class Command extends Lifecycle {
 		}
 
 		public Builder parameter(String tag, String name) {
-			return addParameters(new Parameter(tag, name));
+			return parameters(Map.of(tag, name));
 		}
 
-		public Builder addParameters(Parameter... parameters) {
-			this.parameters.addAll(List.of(parameters));
-			return this;
-		}
-
-		public Builder addParameters(String... parameters) {
-			Stream.of(parameters)
-					.map(Parameter::new)
-					.forEach(this.parameters::add);
+		public Builder parameters(Map<String, String> parameters) {
+			this.parameters.putAll(parameters);
 			return this;
 		}
 

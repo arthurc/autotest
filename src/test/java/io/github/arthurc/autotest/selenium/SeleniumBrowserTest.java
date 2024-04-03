@@ -1,7 +1,6 @@
 package io.github.arthurc.autotest.selenium;
 
 import io.github.arthurc.autotest.command.Command;
-import io.github.arthurc.autotest.command.Parameter;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
 import io.github.arthurc.autotest.test.utils.EventCollector;
 import io.github.arthurc.autotest.web.BaseUrl;
@@ -17,7 +16,7 @@ import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.WebElement;
 
 import java.time.Duration;
-import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -78,7 +77,7 @@ class SeleniumBrowserTest {
 		assertThat(eventCollector.getEvents()).anyMatch(event -> event instanceof LifecycleEvent.AfterBegin
 				&& event.lifecycle() instanceof Command command
 				&& command.getName().equals("visit")
-				&& command.getParameters().equals(List.of(new Parameter("url", "https://example.com/foo")))
+				&& command.getParameters().equals(Map.of("url", "https://example.com/foo"))
 				&& command.getSubject().equals(Optional.of(this.seleniumBrowser)));
 	}
 
@@ -103,7 +102,7 @@ class SeleniumBrowserTest {
 		assertThat(eventCollector.getEvents()).anyMatch(event -> event instanceof LifecycleEvent.AfterBegin
 				&& event.lifecycle() instanceof Command command
 				&& command.getName().equals("find")
-				&& command.getParameters().equals(List.of(new Parameter("css", "selector"))));
+				&& command.getParameters().equals(Map.of("css", "selector")));
 	}
 
 	@Test

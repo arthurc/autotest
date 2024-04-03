@@ -4,6 +4,8 @@ import io.github.arthurc.autotest.test.utils.EventCollector;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -45,14 +47,13 @@ class CommandTest {
 	@Nested
 	class Changing_parameters {
 		@Test
-		void Adds_a_parameter_to_the_list_of_parameters() {
+		void Adds_a_parameter_to_the_map_of_parameters() {
 			var lifecycle = Command.builder().name("arne").build();
 
-			lifecycle.addParameters(new Parameter("key", "value"), new Parameter("value"));
+			lifecycle.addParameters(Map.of("foo", "bar", "bar", "baz"));
 
-			assertThat(lifecycle.getParameters()).containsExactly(
-					new Parameter("key", "value"),
-					new Parameter("value"));
+			assertThat(lifecycle.getParameters())
+					.containsExactlyEntriesOf(Map.of("foo", "bar", "bar", "baz"));
 		}
 
 		@Test
@@ -62,7 +63,7 @@ class CommandTest {
 
 			eventCollector.run(() ->
 					lifecycle.run(() ->
-							lifecycle.addParameters(new Parameter("value"))));
+							lifecycle.addParameters(Map.of("foo", "bar"))));
 
 			assertThat(eventCollector.getEvents()).contains(new CommandEvent.ParametersModified(lifecycle));
 		}
@@ -70,11 +71,10 @@ class CommandTest {
 		@Test
 		void Does_not_publish_a_ParametersModified_event_when_parameters_are_not_changed() {
 			var eventCollector = new EventCollector();
-			var lifecycle = Command.builder().name("arne").build();
-			lifecycle.addParameters(new Parameter("value"));
+			var lifecycle = Command.builder().name("arne").parameter("foo", "bar").build();
 
 			eventCollector.run(() ->
-					lifecycle.run(() -> lifecycle.addParameters()));
+					lifecycle.run(() -> lifecycle.addParameters(Map.of())));
 
 			assertThat(eventCollector.getEvents()).doesNotHaveAnyElementsOfTypes(CommandEvent.class);
 		}
