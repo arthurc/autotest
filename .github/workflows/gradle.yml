@@ -29,7 +29,7 @@ jobs:
       uses: gradle/actions/setup-gradle@v3
 
     - name: Build with Gradle Wrapper
-      run: ./gradlew build --info
+      run: ./gradlew build
 
   dependency-submission:
     runs-on: ubuntu-latest
