@@ -16,4 +16,6 @@ dependencies {
 	optionalApi 'org.awaitility:awaitility'
 
 	testImplementation 'org.junit.platform:junit-platform-testkit'
+
+	integrationTestImplementation libs.wiremock.standalone
 }

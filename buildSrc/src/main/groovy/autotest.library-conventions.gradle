@@ -3,6 +3,18 @@ plugins {
     id 'io.spring.dependency-management'
 }
 
+sourceSets {
+    integrationTest {
+        compileClasspath += sourceSets.main.output
+        runtimeClasspath += sourceSets.main.output
+    }
+}
+
+configurations {
+    integrationTestImplementation.extendsFrom optionalImplementation, implementation
+    integrationTestRuntimeOnly.extendsFrom optionalRuntimeOnly, runtimeOnly
+}
+
 java {
     sourceCompatibility = '21'
 
@@ -24,3 +36,19 @@ dependencyManagement {
 tasks.named('test') {
     useJUnitPlatform()
 }
+
+tasks.register('integrationTest', Test) {
+    description = 'Runs integration tests.'
+    group = 'verification'
+
+    testClassesDirs = sourceSets.integrationTest.output.classesDirs
+    classpath = sourceSets.integrationTest.runtimeClasspath
+    shouldRunAfter test
+
+    useJUnitPlatform()
+
+    testLogging {
+        events "passed"
+    }
+}
+check.dependsOn integrationTest

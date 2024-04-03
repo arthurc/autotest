@@ -18,9 +18,9 @@ import java.net.URL;
 import java.util.Objects;
 
 @SpringBootApplication
-public class TestsApplication {
+public class IntegrationTestApplication {
 	public static void main(String[] args) {
-		SpringApplication.run(TestsApplication.class, args);
+		SpringApplication.run(IntegrationTestApplication.class, args);
 	}
 
 	@Bean

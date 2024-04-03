@@ -1,5 +1,4 @@
 rootProject.name = 'autotest'
 
 include ':examples:google'
-include ':tests'
 include ':starters:spring-boot-starter-autotest'
