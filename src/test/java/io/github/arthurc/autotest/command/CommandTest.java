@@ -1,4 +1,4 @@
-package io.github.arthurc.autotest.commandexecution;
+package io.github.arthurc.autotest.command;
 
 import io.github.arthurc.autotest.test.utils.EventCollector;
 import org.junit.jupiter.api.Nested;

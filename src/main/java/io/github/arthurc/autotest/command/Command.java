@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.commandexecution;
+package io.github.arthurc.autotest.command;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 

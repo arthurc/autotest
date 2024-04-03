@@ -3,7 +3,7 @@
  */
 package io.github.arthurc.autotest.web;
 
-import io.github.arthurc.autotest.commandexecution.Command;
+import io.github.arthurc.autotest.command.Command;
 
 /**
  * An abstract element implementation that provides a default implementation for {@link Element}.

@@ -3,7 +3,7 @@
  */
 package io.github.arthurc.autotest.web;
 
-import io.github.arthurc.autotest.commandexecution.Command;
+import io.github.arthurc.autotest.command.Command;
 import org.awaitility.core.ConditionTimeoutException;
 
 import java.util.Objects;

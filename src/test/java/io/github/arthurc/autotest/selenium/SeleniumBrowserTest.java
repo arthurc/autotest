@@ -1,7 +1,7 @@
 package io.github.arthurc.autotest.selenium;
 
-import io.github.arthurc.autotest.commandexecution.Command;
-import io.github.arthurc.autotest.commandexecution.Parameter;
+import io.github.arthurc.autotest.command.Command;
+import io.github.arthurc.autotest.command.Parameter;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
 import io.github.arthurc.autotest.test.utils.EventCollector;
 import io.github.arthurc.autotest.web.BaseUrl;

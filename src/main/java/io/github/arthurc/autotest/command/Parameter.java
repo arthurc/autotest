@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.commandexecution;
+package io.github.arthurc.autotest.command;
 
 /**
  * A parameter has a value and an optional tag. The tag can be used to identify the parameter,
