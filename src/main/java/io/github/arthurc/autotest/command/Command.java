@@ -10,8 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.concurrent.Callable;
 
 /**
  * A command is a lifecycle that represents a command that can be executed.
@@ -32,6 +31,14 @@ public class Command extends Lifecycle {
 
 	public static Builder builder() {
 		return new Builder();
+	}
+
+	public static void run(String name, Map<String, String> parameters, Runnable task) {
+		builder().name(name).parameters(parameters).build().run(task);
+	}
+
+	public static <T> T call(String name, Map<String, String> parameters, Callable<T> action) {
+		return builder().name(name).parameters(parameters).build().call(action);
 	}
 
 	public String getName() {
@@ -80,14 +87,6 @@ public class Command extends Lifecycle {
 			this.subject = subject;
 			publish(new CommandEvent.SubjectChanged(this));
 		}
-	}
-
-	public void run(Consumer<Command> c) {
-		run(() -> c.accept(this));
-	}
-
-	public <T> T call(Function<Command, T> f) {
-		return call(() -> f.apply(this));
 	}
 
 	public static class Builder {

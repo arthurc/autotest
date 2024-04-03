@@ -8,6 +8,8 @@ import io.github.arthurc.autotest.command.Command;
 import io.github.arthurc.autotest.web.Browser;
 import org.springframework.stereotype.Component;
 
+import java.util.Map;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @Component
@@ -21,11 +23,7 @@ public class GooglePage {
 	}
 
 	public void search(String keyword) {
-		Command.builder()
-				.name("search")
-				.parameter("keyword", keyword)
-				.build()
-				.run(() -> doSearch(keyword));
+		Command.run("search", Map.of("keyword", keyword), () -> doSearch(keyword));
 	}
 
 	private void doSearch(String text) {

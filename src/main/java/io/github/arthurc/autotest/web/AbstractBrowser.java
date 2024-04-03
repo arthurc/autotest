@@ -40,43 +40,43 @@ public abstract class AbstractBrowser implements Browser {
 
 	@Override
 	public Element find(String selector) {
-		return Command.builder()
+		Command command = Command.builder()
 				.name("find")
 				.parameter("css", selector)
 				.subject(this)
-				.build()
-				.call(lifecycle -> {
-					var element = doFind(selector);
-					lifecycle.setSubject(element);
-					return element;
-				});
+				.build();
+		return command.call(() -> {
+			var element = doFind(selector);
+			command.setSubject(element);
+			return element;
+		});
 	}
 
 	@Override
 	public Optional<Element> query(String selector) {
-		return Command.builder()
+		Command command = Command.builder()
 				.name("get")
 				.parameter("css", selector)
 				.subject(this)
-				.build()
-				.call(lifecycle -> {
-					var element = doQuery(selector);
-					element.ifPresent(lifecycle::setSubject);
-					return element;
-				});
+				.build();
+		return command.call(() -> {
+			var element = doQuery(selector);
+			element.ifPresent(command::setSubject);
+			return element;
+		});
 	}
 
 	@Override
 	public Element getFocused() {
-		return Command.builder()
+		Command command = Command.builder()
 				.name("get-focused")
 				.subject(this)
-				.build()
-				.call(lifecycle -> {
-					var element = doGetFocused();
-					lifecycle.setSubject(element);
-					return element;
-				});
+				.build();
+		return command.call(() -> {
+			var element = doGetFocused();
+			command.setSubject(element);
+			return element;
+		});
 	}
 
 	protected abstract void doVisit(String url);
