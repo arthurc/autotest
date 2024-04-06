@@ -39,6 +39,11 @@ public class ApplicationContextLifecycle extends Lifecycle {
 			Assert.notNull(this.applicationContext, "ApplicationContext was not set");
 		}
 
+		if (this.applicationContext != null) {
+			this.applicationContext.publishEvent(event);
+		}
+	}
+
 	protected SpringApplication getSpringApplication() {
 		return new SpringApplication(ApplicationContextLifecycleApplication.class);
 	}
