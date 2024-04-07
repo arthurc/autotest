@@ -94,6 +94,15 @@ public class Command extends Lifecycle {
 		}
 	}
 
+	/**
+	 * Gets the parent command of this command.
+	 *
+	 * @return The parent command of this command or an empty {@link Optional} if there is no parent command found.
+	 */
+	public Optional<Command> getParentCommand() {
+		return findParent(Command.class);
+	}
+
 	public static class Builder {
 		private String name;
 		private final Map<String, String> parameters = new LinkedHashMap<>();
