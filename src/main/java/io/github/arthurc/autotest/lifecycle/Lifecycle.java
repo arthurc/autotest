@@ -7,7 +7,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.ServiceLoader;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -38,7 +37,6 @@ public abstract class Lifecycle {
 		ServiceLoader.load(LifecycleFactory.class).forEach(factory -> factory.createLifecycle().begin());
 	}
 
-	private final UUID id = UUID.randomUUID();
 	private Lifecycle parent;
 	private final Attributes attributes = new Attributes();
 
@@ -94,10 +92,6 @@ public abstract class Lifecycle {
 	 */
 	public static <T extends Lifecycle> T get(Class<T> type, Predicate<T> predicate) {
 		return find(type, predicate).orElseThrow(NoSuchLifecycleException::new);
-	}
-
-	public UUID getId() {
-		return this.id;
 	}
 
 	/**

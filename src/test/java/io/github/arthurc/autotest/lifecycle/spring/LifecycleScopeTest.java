@@ -82,11 +82,6 @@ class LifecycleScopeTest {
 		}
 
 		@Test
-		void Returns_the_lifecycle_id_as_conversation_id() {
-			assertThat(scope.getConversationId()).isEqualTo(this.lifecycle.getId().toString());
-		}
-
-		@Test
 		void Executes_destruction_callbacks_when_the_lifecycle_ends() {
 			Runnable callback = mock();
 			scope.registerDestructionCallback("foo", callback);

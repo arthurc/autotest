@@ -61,6 +61,6 @@ public class LifecycleScope implements Scope {
 
 	@Override
 	public String getConversationId() {
-		return Lifecycle.get(this.lifecycleClass).getId().toString();
+		return null;
 	}
 }
