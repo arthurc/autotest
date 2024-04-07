@@ -403,5 +403,31 @@ class LifecycleTest {
 
 			verify(task).run();
 		}
+
+		@Nested
+		class Finding_the_parent_lifecycle {
+			private final TestLifecycle foo = new TestLifecycle();
+			private final TestLifecycle bar = new TestLifecycle();
+			private final TestLifecycle baz = new TestLifecycle();
+
+			@Test
+			void Returns_the_parent_lifecycle() {
+				var parent = foo.call(() -> bar.call(() -> baz.call(() -> bar.findParent(TestLifecycle.class))));
+
+				assertThat(parent).hasValue(foo);
+			}
+
+			@Test
+			void Returns_the_parent_lifecycle_matching_the_predicate() {
+				var parent = foo.call(() -> bar.call(() -> baz.call(() -> baz.findParent(TestLifecycle.class, foo::equals))));
+
+				assertThat(parent).hasValue(foo);
+			}
+
+			@Test
+			void Returns_an_empty_optional_if_there_is_no_parent_lifecycle() {
+				assertThat(foo.findParent(TestLifecycle.class)).isEmpty();
+			}
+		}
 	}
 }
