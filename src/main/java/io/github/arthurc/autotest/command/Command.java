@@ -19,6 +19,7 @@ import java.util.concurrent.Callable;
  * @since 1.0.0
  */
 public class Command extends Lifecycle {
+	private final CommandId id = new CommandId();
 	private final String name;
 	private final Map<String, String> parameters = new LinkedHashMap<>();
 	private Object subject;
@@ -39,6 +40,10 @@ public class Command extends Lifecycle {
 
 	public static <T> T call(String name, Map<String, String> parameters, Callable<T> action) {
 		return builder().name(name).parameters(parameters).build().call(action);
+	}
+
+	public CommandId getId() {
+		return this.id;
 	}
 
 	public String getName() {
@@ -87,6 +92,15 @@ public class Command extends Lifecycle {
 			this.subject = subject;
 			publish(new CommandEvent.SubjectChanged(this));
 		}
+	}
+
+	/**
+	 * Gets the parent command of this command.
+	 *
+	 * @return The parent command of this command or an empty {@link Optional} if there is no parent command found.
+	 */
+	public Optional<Command> getParentCommand() {
+		return findParent(Command.class);
 	}
 
 	public static class Builder {

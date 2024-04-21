@@ -3,5 +3,7 @@
  */
 package io.github.arthurc.autotest.testplan;
 
-public record TestId(String value) {
+import com.fasterxml.jackson.annotation.JsonValue;
+
+public record TestId(@JsonValue String value) {
 }

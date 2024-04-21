@@ -7,7 +7,6 @@ import java.util.Deque;
 import java.util.LinkedList;
 import java.util.Optional;
 import java.util.ServiceLoader;
-import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.function.Predicate;
 import java.util.logging.Level;
@@ -38,7 +37,6 @@ public abstract class Lifecycle {
 		ServiceLoader.load(LifecycleFactory.class).forEach(factory -> factory.createLifecycle().begin());
 	}
 
-	private final UUID id = UUID.randomUUID();
 	private Lifecycle parent;
 	private final Attributes attributes = new Attributes();
 
@@ -94,10 +92,6 @@ public abstract class Lifecycle {
 	 */
 	public static <T extends Lifecycle> T get(Class<T> type, Predicate<T> predicate) {
 		return find(type, predicate).orElseThrow(NoSuchLifecycleException::new);
-	}
-
-	public UUID getId() {
-		return this.id;
 	}
 
 	/**
@@ -221,6 +215,34 @@ public abstract class Lifecycle {
 	 */
 	public void end() {
 		end(LifecycleResult.VOID);
+	}
+
+	/**
+	 * Finds a parent lifecycle to this lifecycle of the specified type and matching the specified predicate.
+	 * If no parent lifecycle is found, an empty {@link Optional} is returned.
+	 *
+	 * @param type      The type of the parent lifecycle to find.
+	 * @param predicate The predicate to satisfy.
+	 * @return An {@link Optional} containing the parent lifecycle if found, otherwise an empty {@link Optional}.
+	 */
+	public <T extends Lifecycle> Optional<T> findParent(Class<T> type, Predicate<T> predicate) {
+		for (var p = this.parent; p != null; p = p.parent) {
+			if (type.isInstance(p) && predicate.test(type.cast(p))) {
+				return Optional.of(type.cast(p));
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Finds a parent lifecycle to this lifecycle of the specified type.
+	 * If no parent lifecycle is found, an empty {@link Optional} is returned.
+	 *
+	 * @param type The type of the parent lifecycle to find.
+	 * @return An {@link Optional} containing the parent lifecycle if found, otherwise an empty {@link Optional}.
+	 */
+	public <T extends Lifecycle> Optional<T> findParent(Class<T> type) {
+		return findParent(type, t -> true);
 	}
 
 	protected void publish(LifecycleEvent event) {

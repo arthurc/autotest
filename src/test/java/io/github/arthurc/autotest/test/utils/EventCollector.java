@@ -15,6 +15,8 @@ public class EventCollector extends Lifecycle {
 
 	@Override
 	protected void onLifecycleEvent(LifecycleEvent event) {
-		this.events.add(event);
+		if (event.lifecycle() != this) {
+			this.events.add(event);
+		}
 	}
 }

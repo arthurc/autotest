@@ -10,12 +10,21 @@ allprojects {
 dependencies {
 	optionalApi 'org.springframework.boot:spring-boot-starter'
 	optionalApi 'org.springframework.boot:spring-boot-starter-test'
+	optionalApi 'org.springframework:spring-jdbc'
 	optionalApi 'org.junit.platform:junit-platform-launcher'
 	optionalApi 'org.junit.jupiter:junit-jupiter-api'
 	optionalApi 'org.seleniumhq.selenium:selenium-java'
 	optionalApi 'org.awaitility:awaitility'
+	optionalApi 'io.cloudevents:cloudevents-core'
+	optionalApi 'com.fasterxml.jackson.core:jackson-databind'
 
 	testImplementation 'org.junit.platform:junit-platform-testkit'
+	testImplementation 'io.cloudevents:cloudevents-json-jackson'
+	testImplementation 'com.h2database:h2'
 
 	integrationTestImplementation libs.wiremock.standalone
+	integrationTestImplementation 'io.cloudevents:cloudevents-json-jackson'
+	integrationTestImplementation 'com.h2database:h2'
+	integrationTestImplementation 'org.springframework.boot:spring-boot-starter-jdbc'
+	integrationTestImplementation 'org.springframework.boot:spring-boot-starter-web'
 }

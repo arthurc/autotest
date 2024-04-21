@@ -3,6 +3,8 @@
  */
 package io.github.arthurc.autotest.testplan;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -18,6 +20,7 @@ public record TestPlanModel(List<TestModel> tests) {
 		this(new ArrayList<>());
 	}
 
+	@JsonIgnore
 	public boolean isEmpty() {
 		return tests().isEmpty();
 	}

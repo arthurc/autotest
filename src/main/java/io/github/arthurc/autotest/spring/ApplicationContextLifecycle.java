@@ -8,7 +8,7 @@ import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
 import io.github.arthurc.autotest.testplan.TestPlanLifecycle;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
-import org.springframework.boot.builder.SpringApplicationBuilder;
+import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.Assert;
 
@@ -35,9 +35,17 @@ public class ApplicationContextLifecycle extends Lifecycle {
 		if (event instanceof LifecycleEvent.AfterBegin afterBegin
 				&& afterBegin.lifecycle() instanceof TestPlanLifecycle
 				&& this.applicationContext == null) {
-			new SpringApplicationBuilder(ApplicationContextLifecycleApplication.class).run();
+			getSpringApplication().run();
 			Assert.notNull(this.applicationContext, "ApplicationContext was not set");
 		}
+
+		if (this.applicationContext != null) {
+			this.applicationContext.publishEvent(event);
+		}
+	}
+
+	protected SpringApplication getSpringApplication() {
+		return new SpringApplication(ApplicationContextLifecycleApplication.class);
 	}
 
 	public static class Registrar {
@@ -49,7 +57,7 @@ public class ApplicationContextLifecycle extends Lifecycle {
 
 		@PostConstruct
 		void init() {
-			Lifecycle.find(ApplicationContextLifecycle.class).ifPresent(l -> l.setApplicationContext(this.applicationContext));
+			Lifecycle.find(ApplicationContextLifecycle.class).filter(l -> l.applicationContext == null).ifPresent(l -> l.setApplicationContext(this.applicationContext));
 		}
 
 		@PreDestroy
