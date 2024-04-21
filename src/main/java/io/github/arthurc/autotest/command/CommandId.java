@@ -3,9 +3,11 @@
  */
 package io.github.arthurc.autotest.command;
 
+import com.fasterxml.jackson.annotation.JsonValue;
+
 import java.util.UUID;
 
-public record CommandId(UUID id) {
+public record CommandId(@JsonValue UUID id) {
 	public CommandId() {
 		this(UUID.randomUUID());
 	}
