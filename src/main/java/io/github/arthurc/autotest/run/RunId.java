@@ -11,4 +11,8 @@ public record RunId(@JsonValue UUID id) {
 	public RunId() {
 		this(UUID.randomUUID());
 	}
+
+	public RunId(String id) {
+		this(UUID.fromString(id));
+	}
 }

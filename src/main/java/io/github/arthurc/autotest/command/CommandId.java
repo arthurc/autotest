@@ -11,4 +11,8 @@ public record CommandId(@JsonValue UUID id) {
 	public CommandId() {
 		this(UUID.randomUUID());
 	}
+
+	public CommandId(String id) {
+		this(UUID.fromString(id));
+	}
 }

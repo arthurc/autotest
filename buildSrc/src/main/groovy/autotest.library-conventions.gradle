@@ -27,6 +27,10 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation platform(libs.cloudevents.bom)
+}
+
 dependencyManagement {
     imports {
         mavenBom org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES

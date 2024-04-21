@@ -6,5 +6,7 @@ dependencies {
     api 'org.springframework.boot:spring-boot-starter-web'
     api 'org.springframework.boot:spring-boot-starter-test'
     api 'org.seleniumhq.selenium:selenium-java'
+    api 'io.cloudevents:cloudevents-core'
+    api 'io.cloudevents:cloudevents-json-jackson'
     api rootProject
 }
