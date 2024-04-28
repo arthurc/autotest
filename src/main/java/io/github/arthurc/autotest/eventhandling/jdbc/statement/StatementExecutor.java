@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.eventing.jdbc.statement;
+package io.github.arthurc.autotest.eventhandling.jdbc.statement;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;

@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.eventing;
+package io.github.arthurc.autotest.eventhandling;
 
 import io.cloudevents.CloudEvent;
 

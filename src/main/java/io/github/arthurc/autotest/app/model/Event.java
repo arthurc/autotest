@@ -33,4 +33,7 @@ public sealed interface Event {
 
 	record CommandEnded(CommandId commandId) implements Event {
 	}
+
+	record RunEnded() implements Event {
+	}
 }

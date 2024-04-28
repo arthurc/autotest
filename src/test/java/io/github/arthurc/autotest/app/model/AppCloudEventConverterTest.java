@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.CloudEventData;
 import io.cloudevents.core.builder.CloudEventBuilder;
-import io.github.arthurc.autotest.eventing.ReflectiveCloudEventTypeMapper;
+import io.github.arthurc.autotest.eventhandling.ReflectiveCloudEventTypeMapper;
 import io.github.arthurc.autotest.testplan.TestId;
 import org.junit.jupiter.api.Test;
 

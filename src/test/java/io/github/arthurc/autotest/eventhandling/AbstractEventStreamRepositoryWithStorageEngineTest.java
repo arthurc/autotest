@@ -1,18 +1,13 @@
-package io.github.arthurc.autotest.eventing.jdbc;
+package io.github.arthurc.autotest.eventhandling;
 
 import io.cloudevents.CloudEvent;
 import io.cloudevents.CloudEventData;
 import io.cloudevents.core.builder.CloudEventBuilder;
-import io.github.arthurc.autotest.eventing.EventStream;
-import io.github.arthurc.autotest.spring.jdbc.SpringJdbcStatementExecutor;
 import org.assertj.core.api.recursive.comparison.RecursiveComparisonConfiguration;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.JdbcTest;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.net.URI;
 import java.util.UUID;
@@ -23,8 +18,8 @@ import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.InstanceOfAssertFactories.BYTE_ARRAY;
 
-@JdbcTest
-class JdbcEventStreamRepositoryTest {
+@Transactional
+abstract class AbstractEventStreamRepositoryWithStorageEngineTest {
 
 	private static final RecursiveComparisonConfiguration CLOUD_EVENT_COMPARISON = RecursiveComparisonConfiguration.builder()
 			.withIgnoredFields("data")
@@ -41,12 +36,7 @@ class JdbcEventStreamRepositoryTest {
 			.build();
 
 	@Autowired
-	private JdbcEventStreamRepository eventStreamRepository;
-
-	@BeforeEach
-	void setUp() {
-		eventStreamRepository.createSchema();
-	}
+	private EventStreamRepository eventStreamRepository;
 
 	@Test
 	void Should_get_an_empty_event_stream_by_default() {
@@ -104,13 +94,10 @@ class JdbcEventStreamRepositoryTest {
 				.containsExactly(CLOUD_EVENT_1, CLOUD_EVENT_2);
 	}
 
-	@Configuration
-	static class TestConfig {
+	static class AbstractTestConfig {
 		@Bean
-		JdbcEventStreamRepository eventStreamRepository(JdbcTemplate jdbcTemplate) {
-			return JdbcEventStreamRepository.builder()
-					.statementExecutor(new SpringJdbcStatementExecutor(jdbcTemplate))
-					.build();
+		EventStreamRepository eventStreamRepository(EventStorageEngine eventStorageEngine) {
+			return new EventStreamRepository(eventStorageEngine);
 		}
 	}
 }

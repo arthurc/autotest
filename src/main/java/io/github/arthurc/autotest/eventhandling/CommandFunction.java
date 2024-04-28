@@ -1,4 +1,4 @@
-package io.github.arthurc.autotest.eventing;
+package io.github.arthurc.autotest.eventhandling;
 
 import java.util.function.Function;
 import java.util.stream.Stream;

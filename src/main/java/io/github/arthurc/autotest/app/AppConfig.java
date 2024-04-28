@@ -6,11 +6,12 @@ package io.github.arthurc.autotest.app;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.arthurc.autotest.app.model.AppCloudEventConverter;
 import io.github.arthurc.autotest.app.model.Event;
-import io.github.arthurc.autotest.eventing.ApplicationService;
-import io.github.arthurc.autotest.eventing.CloudEventConverter;
-import io.github.arthurc.autotest.eventing.EventStreamRepository;
-import io.github.arthurc.autotest.eventing.ReflectiveCloudEventTypeMapper;
-import io.github.arthurc.autotest.eventing.jdbc.JdbcEventStreamRepository;
+import io.github.arthurc.autotest.eventhandling.ApplicationService;
+import io.github.arthurc.autotest.eventhandling.CloudEventConverter;
+import io.github.arthurc.autotest.eventhandling.EventStorageEngine;
+import io.github.arthurc.autotest.eventhandling.EventStreamRepository;
+import io.github.arthurc.autotest.eventhandling.ReflectiveCloudEventTypeMapper;
+import io.github.arthurc.autotest.eventhandling.jdbc.JdbcEventStorageEngine;
 import io.github.arthurc.autotest.spring.jdbc.SpringJdbcStatementExecutor;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
@@ -26,12 +27,18 @@ import javax.sql.DataSource;
 public class AppConfig {
 	@Bean
 	@ConditionalOnMissingBean
-	EventStreamRepository eventStreamRepository() throws Exception {
-		JdbcEventStreamRepository eventStreamRepository = JdbcEventStreamRepository.builder()
+	EventStorageEngine eventStorageEngine() throws Exception {
+		JdbcEventStorageEngine eventStorageEngine = JdbcEventStorageEngine.builder()
 				.statementExecutor(new SpringJdbcStatementExecutor(cloudEventDataSource()))
 				.build();
-		eventStreamRepository.createSchema();
-		return eventStreamRepository;
+		eventStorageEngine.createSchema();
+		return eventStorageEngine;
+	}
+
+	@Bean
+	@ConditionalOnMissingBean
+	EventStreamRepository eventStreamRepository(EventStorageEngine eventStorageEngine) {
+		return new EventStreamRepository(eventStorageEngine);
 	}
 
 	@Bean

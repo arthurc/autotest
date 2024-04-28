@@ -1,4 +1,4 @@
-package io.github.arthurc.autotest.eventing;
+package io.github.arthurc.autotest.eventhandling;
 
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;

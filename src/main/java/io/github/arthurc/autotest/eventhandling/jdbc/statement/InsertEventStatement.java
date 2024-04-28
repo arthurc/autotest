@@ -1,11 +1,11 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.eventing.jdbc.statement;
+package io.github.arthurc.autotest.eventhandling.jdbc.statement;
 
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.format.EventFormat;
-import io.github.arthurc.autotest.eventing.jdbc.EventSchema;
+import io.github.arthurc.autotest.eventhandling.jdbc.EventSchema;
 
 import java.util.UUID;
 import java.util.stream.Stream;

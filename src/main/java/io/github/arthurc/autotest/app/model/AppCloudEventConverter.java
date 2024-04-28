@@ -7,8 +7,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.builder.CloudEventBuilder;
-import io.github.arthurc.autotest.eventing.CloudEventConverter;
-import io.github.arthurc.autotest.eventing.CloudEventTypeMapper;
+import io.github.arthurc.autotest.eventhandling.CloudEventConverter;
+import io.github.arthurc.autotest.eventhandling.CloudEventTypeMapper;
 
 import java.io.IOException;
 import java.net.URI;

@@ -3,7 +3,7 @@
  */
 package io.github.arthurc.autotest.spring.jdbc;
 
-import io.github.arthurc.autotest.eventing.jdbc.statement.StatementExecutor;
+import io.github.arthurc.autotest.eventhandling.jdbc.statement.StatementExecutor;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 

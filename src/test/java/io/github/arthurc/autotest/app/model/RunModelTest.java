@@ -1,7 +1,7 @@
 package io.github.arthurc.autotest.app.model;
 
 import io.github.arthurc.autotest.command.CommandId;
-import io.github.arthurc.autotest.eventing.CommandFunction;
+import io.github.arthurc.autotest.eventhandling.CommandFunction;
 import io.github.arthurc.autotest.testplan.TestId;
 import io.github.arthurc.autotest.testplan.TestPlanModel;
 import org.junit.jupiter.api.Nested;

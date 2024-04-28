@@ -6,7 +6,7 @@ package io.github.arthurc.autotest.app;
 import io.github.arthurc.autotest.app.model.Event;
 import io.github.arthurc.autotest.app.model.RunModel;
 import io.github.arthurc.autotest.command.Command;
-import io.github.arthurc.autotest.eventing.ApplicationService;
+import io.github.arthurc.autotest.eventhandling.ApplicationService;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
 import io.github.arthurc.autotest.run.Run;
 import io.github.arthurc.autotest.run.RunId;

@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.eventing.jdbc;
+package io.github.arthurc.autotest.eventhandling.jdbc;
 
 import java.io.Serial;
 

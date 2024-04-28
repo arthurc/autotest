@@ -4,7 +4,7 @@
 package io.github.arthurc.autotest.app.model;
 
 import io.github.arthurc.autotest.command.CommandId;
-import io.github.arthurc.autotest.eventing.CommandFunction;
+import io.github.arthurc.autotest.eventhandling.CommandFunction;
 import io.github.arthurc.autotest.testplan.TestId;
 import io.github.arthurc.autotest.testplan.TestPlanModel;
 
@@ -37,5 +37,9 @@ public class RunModel {
 
 	public static CommandFunction<Event> setCommandEnded(CommandId commandId) {
 		return events -> Stream.of(new Event.CommandEnded(commandId));
+	}
+
+	public static CommandFunction<Event> endRun() {
+		return events -> Stream.of(new Event.RunEnded());
 	}
 }

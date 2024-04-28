@@ -1,19 +1,18 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.eventing.jdbc;
+package io.github.arthurc.autotest.eventhandling.jdbc;
 
 import io.cloudevents.CloudEvent;
 import io.cloudevents.core.format.ContentType;
 import io.cloudevents.core.format.EventFormat;
 import io.cloudevents.core.provider.EventFormatProvider;
-import io.github.arthurc.autotest.eventing.EventStream;
-import io.github.arthurc.autotest.eventing.EventStreamRepository;
-import io.github.arthurc.autotest.eventing.jdbc.statement.CreateCloudEventTableStatement;
-import io.github.arthurc.autotest.eventing.jdbc.statement.GetStreamVersionStatement;
-import io.github.arthurc.autotest.eventing.jdbc.statement.InsertEventStatement;
-import io.github.arthurc.autotest.eventing.jdbc.statement.SelectEventsStatement;
-import io.github.arthurc.autotest.eventing.jdbc.statement.StatementExecutor;
+import io.github.arthurc.autotest.eventhandling.EventStorageEngine;
+import io.github.arthurc.autotest.eventhandling.jdbc.statement.CreateCloudEventTableStatement;
+import io.github.arthurc.autotest.eventhandling.jdbc.statement.GetStreamVersionStatement;
+import io.github.arthurc.autotest.eventhandling.jdbc.statement.InsertEventStatement;
+import io.github.arthurc.autotest.eventhandling.jdbc.statement.SelectEventsStatement;
+import io.github.arthurc.autotest.eventhandling.jdbc.statement.StatementExecutor;
 
 import java.util.Arrays;
 import java.util.Objects;
@@ -21,15 +20,15 @@ import java.util.UUID;
 import java.util.stream.Stream;
 
 /**
- * JDBC-based implementation of {@link EventStreamRepository}.
+ * JDBC-based implementation of {@link EventStorageEngine}.
  * <p>
  * This implementation uses a {@link StatementExecutor} to execute SQL statements against a database.
  *
  * @author Arthur Hartwig Carlsson
- * @see EventStreamRepository
+ * @see EventStorageEngine
  * @since 1.0.0
  */
-public class JdbcEventStreamRepository implements EventStreamRepository {
+public class JdbcEventStorageEngine implements EventStorageEngine {
 	private static final EventFormat EVENT_FORMAT = Objects.requireNonNull(EventFormatProvider.getInstance().resolveFormat(ContentType.JSON));
 
 	private final StatementExecutor statementExecutor;
@@ -38,7 +37,7 @@ public class JdbcEventStreamRepository implements EventStreamRepository {
 	private final InsertEventStatement insertEventStatement;
 	private final SelectEventsStatement selectEventsStatement;
 
-	private JdbcEventStreamRepository(Builder builder) {
+	private JdbcEventStorageEngine(Builder builder) {
 		this.statementExecutor = builder.statementExecutor;
 		this.createCloudEventTableStatement = Objects.requireNonNullElseGet(builder.createCloudEventTableStatement, () -> CreateCloudEventTableStatement.compile(builder.schema));
 		this.getStreamVersionStatement = Objects.requireNonNullElseGet(builder.getStreamVersionStatement, () -> GetStreamVersionStatement.compile(builder.schema));
@@ -47,7 +46,7 @@ public class JdbcEventStreamRepository implements EventStreamRepository {
 	}
 
 	/**
-	 * Creates a new {@link Builder} for constructing a {@link JdbcEventStreamRepository}.
+	 * Creates a new {@link Builder} for constructing a {@link JdbcEventStorageEngine}.
 	 *
 	 * @return the builder.
 	 */
@@ -64,28 +63,26 @@ public class JdbcEventStreamRepository implements EventStreamRepository {
 	}
 
 	@Override
-	public EventStream findById(UUID id) {
-		return new JdbcEventStream(this, id);
-	}
-
-	int getStreamVersion(UUID id) {
+	public int streamVersion(UUID id) {
 		return this.getStreamVersionStatement.apply(this.statementExecutor, id);
 	}
 
-	int write(UUID streamId, int expectedVersion, Stream<CloudEvent> events) {
-		int[] updateResults = this.insertEventStatement.apply(this.statementExecutor, streamId, EVENT_FORMAT, expectedVersion, events);
+	@Override
+	public int write(UUID streamId, int currentVersion, Stream<CloudEvent> events) {
+		int[] updateResults = this.insertEventStatement.apply(this.statementExecutor, streamId, EVENT_FORMAT, currentVersion, events);
 		if (Arrays.stream(updateResults).anyMatch(i -> i != 1)) {
 			throw new JdbcEventStreamException("Failed to write all events");
 		}
 		return updateResults.length;
 	}
 
-	Stream<CloudEvent> streamEvents(UUID streamId) {
+	@Override
+	public Stream<CloudEvent> streamEvents(UUID streamId) {
 		return this.selectEventsStatement.apply(this.statementExecutor, streamId, r -> EVENT_FORMAT.deserialize(r.getBytes(SelectEventsStatement.DATA_NAME)));
 	}
 
 	/**
-	 * Builder for constructing a {@link JdbcEventStreamRepository}.
+	 * Builder for constructing a {@link JdbcEventStorageEngine}.
 	 */
 	public static class Builder {
 		private StatementExecutor statementExecutor;
@@ -165,12 +162,12 @@ public class JdbcEventStreamRepository implements EventStreamRepository {
 		}
 
 		/**
-		 * Builds the {@link JdbcEventStreamRepository}.
+		 * Builds the {@link JdbcEventStorageEngine}.
 		 *
 		 * @return the event stream repository
 		 */
-		public JdbcEventStreamRepository build() {
-			return new JdbcEventStreamRepository(this);
+		public JdbcEventStorageEngine build() {
+			return new JdbcEventStorageEngine(this);
 		}
 	}
 }
