@@ -1,7 +1,7 @@
 [versions]
 spring-boot = "3.2.5"
 dependency-management = "1.1.4"
-wiremock = "3.5.3"
+wiremock = "3.5.4"
 cloudevents = "3.0.0"
 
 [libraries]
