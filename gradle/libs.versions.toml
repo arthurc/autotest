@@ -1,6 +1,6 @@
 [versions]
 spring-boot = "3.2.5"
-dependency-management = "1.1.4"
+dependency-management = "1.1.5"
 wiremock = "3.5.4"
 cloudevents = "3.0.0"
 
