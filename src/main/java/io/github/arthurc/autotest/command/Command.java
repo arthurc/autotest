@@ -4,6 +4,8 @@
 package io.github.arthurc.autotest.command;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
+import io.github.arthurc.autotest.testexecution.TestExecutionLifecycle;
+import io.github.arthurc.autotest.teststage.TestStageLifecycle;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;
@@ -101,6 +103,26 @@ public class Command extends Lifecycle {
 	 */
 	public Optional<Command> getParentCommand() {
 		return findParent(Command.class);
+	}
+
+	/**
+	 * Gets the test execution lifecycle that this command is part of.
+	 * If the command is not part of a test execution lifecycle, {@code null} is returned.
+	 *
+	 * @return The test execution lifecycle that this command is part of or {@code null} if the command is not part of a test execution lifecycle.
+	 */
+	public TestExecutionLifecycle getTest() {
+		return findParent(TestExecutionLifecycle.class).orElse(null);
+	}
+
+	/**
+	 * Gets the test stage lifecycle that this command is part of.
+	 * If the command is not part of a test stage lifecycle, {@code null} is returned.
+	 *
+	 * @return The test stage lifecycle that this command is part of or {@code null} if the command is not part of a test stage lifecycle.
+	 */
+	public Optional<TestStageLifecycle> getTestStage() {
+		return findParent(TestStageLifecycle.class);
 	}
 
 	public static class Builder {
