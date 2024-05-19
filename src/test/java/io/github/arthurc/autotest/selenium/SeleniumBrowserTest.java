@@ -78,7 +78,7 @@ class SeleniumBrowserTest {
 				&& event.lifecycle() instanceof Command command
 				&& command.getName().equals("visit")
 				&& command.getParameters().equals(Map.of("url", "https://example.com/foo"))
-				&& command.getSubject().equals(Optional.of(this.seleniumBrowser)));
+				&& command.getSubject().isEmpty());
 	}
 
 	@Test

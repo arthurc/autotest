@@ -33,7 +33,6 @@ public abstract class AbstractBrowser implements Browser {
 		Command.builder()
 				.name("visit")
 				.parameter("url", resolvedUrl)
-				.subject(this)
 				.build()
 				.run(() -> doVisit(resolvedUrl));
 	}
@@ -43,7 +42,6 @@ public abstract class AbstractBrowser implements Browser {
 		Command command = Command.builder()
 				.name("find")
 				.parameter("css", selector)
-				.subject(this)
 				.build();
 		return command.call(() -> {
 			var element = doFind(selector);
@@ -57,7 +55,6 @@ public abstract class AbstractBrowser implements Browser {
 		Command command = Command.builder()
 				.name("get")
 				.parameter("css", selector)
-				.subject(this)
 				.build();
 		return command.call(() -> {
 			var element = doQuery(selector);
@@ -70,7 +67,6 @@ public abstract class AbstractBrowser implements Browser {
 	public Element getFocused() {
 		Command command = Command.builder()
 				.name("get-focused")
-				.subject(this)
 				.build();
 		return command.call(() -> {
 			var element = doGetFocused();
