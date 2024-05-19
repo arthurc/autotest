@@ -5,7 +5,7 @@ package io.github.arthurc.autotest.spring;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
-import io.github.arthurc.autotest.testplan.TestPlanLifecycle;
+import io.github.arthurc.autotest.run.Run;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
 import org.springframework.boot.SpringApplication;
@@ -33,7 +33,7 @@ public class ApplicationContextLifecycle extends Lifecycle {
 	@Override
 	protected void onLifecycleEvent(LifecycleEvent event) {
 		if (event instanceof LifecycleEvent.AfterBegin afterBegin
-				&& afterBegin.lifecycle() instanceof TestPlanLifecycle
+				&& afterBegin.lifecycle() instanceof Run
 				&& this.applicationContext == null) {
 			getSpringApplication().run();
 			Assert.notNull(this.applicationContext, "ApplicationContext was not set");

@@ -4,8 +4,7 @@
 package io.github.arthurc.autotest.spring;
 
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
-import io.github.arthurc.autotest.testplan.TestPlanLifecycle;
-import io.github.arthurc.autotest.testplan.TestPlanModel;
+import io.github.arthurc.autotest.run.Run;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -113,9 +112,9 @@ class ApplicationContextLifecycleTest {
 	}
 
 	@Test
-	void Creates_a_new_application_context_if_not_set_when_a_test_plan_lifecycle_begins() {
+	void Creates_a_new_application_context_if_not_set_when_a_run_begins() {
 		applicationContextLifecycle.run(() ->
-				applicationContextLifecycle.onLifecycleEvent(new LifecycleEvent.AfterBegin(new TestPlanLifecycle(new TestPlanModel()))));
+				applicationContextLifecycle.onLifecycleEvent(new LifecycleEvent.AfterBegin(new Run())));
 
 		verify(applicationContextLifecycle).getSpringApplication();
 		assertThat(applicationContextLifecycle.getApplicationContext()).isNotNull();
