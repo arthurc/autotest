@@ -45,6 +45,8 @@ class TestPlanModelMapper {
 						.map(t -> new TestId(t.getUniqueId()))
 						.orElse(null),
 				testIdentifier.getDisplayName(),
+				testIdentifier.getType().isContainer(),
+				testIdentifier.getType().isTest(),
 				this.testPlan.getChildren(testIdentifier).stream().flatMap(t -> toTestModel(t).stream()).toList()));
 	}
 }

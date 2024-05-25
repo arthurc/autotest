@@ -17,6 +17,8 @@ public record TestModel(
 		TestId id,
 		TestId parentId,
 		String displayName,
+		boolean isContainer,
+		boolean isTest,
 		List<TestModel> children
 ) {
 }

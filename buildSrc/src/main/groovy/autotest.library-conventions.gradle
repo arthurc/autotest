@@ -29,7 +29,7 @@ repositories {
 }
 
 dependencies {
-    implementation platform(libs.cloudevents.bom)
+    implementation platform(libs.occurrent.bom)
 }
 
 dependencyManagement {

@@ -4,63 +4,44 @@
 package io.github.arthurc.autotest.app;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.arthurc.autotest.app.model.AppCloudEventConverter;
 import io.github.arthurc.autotest.app.model.Event;
-import io.github.arthurc.autotest.eventhandling.ApplicationService;
-import io.github.arthurc.autotest.eventhandling.CloudEventConverter;
-import io.github.arthurc.autotest.eventhandling.EventStorageEngine;
-import io.github.arthurc.autotest.eventhandling.EventStreamRepository;
-import io.github.arthurc.autotest.eventhandling.ReflectiveCloudEventTypeMapper;
-import io.github.arthurc.autotest.eventhandling.jdbc.JdbcEventStorageEngine;
-import io.github.arthurc.autotest.spring.jdbc.SpringJdbcStatementExecutor;
+import org.occurrent.application.converter.CloudEventConverter;
+import org.occurrent.application.converter.jackson.JacksonCloudEventConverter;
+import org.occurrent.application.service.blocking.ApplicationService;
+import org.occurrent.application.service.blocking.generic.GenericApplicationService;
+import org.occurrent.eventstore.api.blocking.EventStore;
+import org.occurrent.eventstore.inmemory.InMemoryEventStore;
+import org.occurrent.subscription.inmemory.InMemorySubscriptionModel;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.jdbc.DataSourceProperties;
-import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 
-import javax.sql.DataSource;
+import java.net.URI;
 
 @Configuration(proxyBeanMethods = false)
 @ComponentScan
 public class AppConfig {
-	@Bean
-	@ConditionalOnMissingBean
-	EventStorageEngine eventStorageEngine() throws Exception {
-		JdbcEventStorageEngine eventStorageEngine = JdbcEventStorageEngine.builder()
-				.statementExecutor(new SpringJdbcStatementExecutor(cloudEventDataSource()))
-				.build();
-		eventStorageEngine.createSchema();
-		return eventStorageEngine;
-	}
 
 	@Bean
 	@ConditionalOnMissingBean
-	EventStreamRepository eventStreamRepository(EventStorageEngine eventStorageEngine) {
-		return new EventStreamRepository(eventStorageEngine);
+	EventStore eventStore(InMemorySubscriptionModel subscriptionModel) {
+		return new InMemoryEventStore(subscriptionModel);
 	}
 
 	@Bean
 	CloudEventConverter<Event> cloudEventConverter(ObjectMapper objectMapper) {
-		return new AppCloudEventConverter(new ReflectiveCloudEventTypeMapper<>(Event.class.getClassLoader()), objectMapper);
+		return new JacksonCloudEventConverter<>(objectMapper, URI.create("urn:autotest"));
 	}
 
 	@Bean
-	ApplicationService<Event> applicationService(EventStreamRepository eventStreamRepository, CloudEventConverter<Event> cloudEventConverter) {
-		return new ApplicationService<>(eventStreamRepository, cloudEventConverter);
+	@ConditionalOnMissingBean
+	ApplicationService<Event> applicationService(EventStore eventStore, CloudEventConverter<Event> cloudEventConverter) {
+		return new GenericApplicationService<>(eventStore, cloudEventConverter);
 	}
 
 	@Bean
-	@ConfigurationProperties("spring.datasource.cloud-event")
-	DataSourceProperties cloudEventDataSourceProperties() throws Exception {
-		DataSourceProperties dataSourceProperties = new DataSourceProperties();
-		dataSourceProperties.afterPropertiesSet();
-		return dataSourceProperties;
-	}
-
-	@Bean
-	DataSource cloudEventDataSource() throws Exception {
-		return cloudEventDataSourceProperties().initializeDataSourceBuilder().build();
+	InMemorySubscriptionModel inMemorySubscriptionModel() {
+		return new InMemorySubscriptionModel();
 	}
 }
