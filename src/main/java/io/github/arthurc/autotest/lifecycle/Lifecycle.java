@@ -226,12 +226,9 @@ public abstract class Lifecycle {
 	 * @return An {@link Optional} containing the parent lifecycle if found, otherwise an empty {@link Optional}.
 	 */
 	public <T extends Lifecycle> Optional<T> findParent(Class<T> type, Predicate<T> predicate) {
-		for (var p = this.parent; p != null; p = p.parent) {
-			if (type.isInstance(p) && predicate.test(type.cast(p))) {
-				return Optional.of(type.cast(p));
-			}
-		}
-		return Optional.empty();
+		return this.parent != null
+				? this.parent.findSelfOrParent(type, predicate)
+				: Optional.empty();
 	}
 
 	/**
@@ -243,6 +240,35 @@ public abstract class Lifecycle {
 	 */
 	public <T extends Lifecycle> Optional<T> findParent(Class<T> type) {
 		return findParent(type, t -> true);
+	}
+
+	/**
+	 * Finds a lifecycle of the specified type and matching the specified predicate in the lifecycle stack relative to
+	 * this lifecycle. If no lifecycle is found, an empty {@link Optional} is returned.
+	 *
+	 * @param type      The type of the lifecycle to find.
+	 * @param predicate The predicate to satisfy.
+	 * @param <T>       The type of the lifecycle.
+	 * @return An {@link Optional} containing the lifecycle if found, otherwise an empty {@link Optional}.
+	 */
+	public <T extends Lifecycle> Optional<T> findSelfOrParent(Class<T> type, Predicate<T> predicate) {
+		for (var p = this; p != null; p = p.parent) {
+			if (type.isInstance(p) && predicate.test(type.cast(p))) {
+				return Optional.of(type.cast(p));
+			}
+		}
+		return Optional.empty();
+	}
+
+	/**
+	 * Finds a lifecycle of the specified type in the lifecycle stack relative to this lifecycle.
+	 *
+	 * @param type The type of the lifecycle to find.
+	 * @param <T>  The type of the lifecycle.
+	 * @return An {@link Optional} containing the lifecycle if found, otherwise an empty {@link Optional}.
+	 */
+	public <T extends Lifecycle> Optional<T> findSelfOrParent(Class<T> type) {
+		return findSelfOrParent(type, t -> true);
 	}
 
 	protected void publish(LifecycleEvent event) {
