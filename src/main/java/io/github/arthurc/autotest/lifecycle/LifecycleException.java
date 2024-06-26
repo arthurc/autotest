@@ -3,6 +3,8 @@
  */
 package io.github.arthurc.autotest.lifecycle;
 
+import java.io.Serial;
+
 /**
  * Exception thrown when a lifecycle operation fails.
  *
@@ -10,6 +12,9 @@ package io.github.arthurc.autotest.lifecycle;
  * @since 1.0.0
  */
 public class LifecycleException extends RuntimeException {
+
+	@Serial
+	private static final long serialVersionUID = -1383205608544200273L;
 
 	public LifecycleException() {
 	}
