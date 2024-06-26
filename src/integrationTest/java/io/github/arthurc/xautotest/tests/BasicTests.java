@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.tests;
+package io.github.arthurc.xautotest.tests;
 
 import io.github.arthurc.autotest.AutotestTest;
 import io.github.arthurc.autotest.web.Browser;

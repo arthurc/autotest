@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.tests;
+package io.github.arthurc.xautotest.tests;
 
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
