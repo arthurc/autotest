@@ -1,15 +1,17 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.spring.boot.autoconfigure;
+package io.github.arthurc.autotest.selenium;
 
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.context.properties.PropertyMapper;
+import org.springframework.context.annotation.Configuration;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Configuration(proxyBeanMethods = false)
 @ConfigurationProperties("autotest.browser.chrome")
 public class ChromeOptionsProperties {
 	private String binary;
