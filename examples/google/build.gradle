@@ -17,4 +17,5 @@ tasks.register("autotest", Test) {
 
     testClassesDirs = sourceSets.main.output.classesDirs
     classpath = sourceSets.main.runtimeClasspath
+    outputs.upToDateWhen { false } // always run the tests
 }
