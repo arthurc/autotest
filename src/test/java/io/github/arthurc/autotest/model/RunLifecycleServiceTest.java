@@ -1,8 +1,6 @@
-package io.github.arthurc.autotest.app;
+package io.github.arthurc.autotest.model;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.arthurc.autotest.app.model.Event;
-import io.github.arthurc.autotest.app.model.RunEvent;
 import io.github.arthurc.autotest.command.Command;
 import io.github.arthurc.autotest.run.Run;
 import io.github.arthurc.autotest.spring.ApplicationContextLifecycle;
@@ -31,7 +29,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 
 @SpringJUnitConfig
-class LifecycleApplicationEventListenerTest {
+class RunLifecycleServiceTest {
 
 	private final RecursiveComparisonConfiguration recursiveComparisonConfiguration = RecursiveComparisonConfiguration.builder()
 			.withIgnoredFields("commandId")
@@ -96,6 +94,11 @@ class LifecycleApplicationEventListenerTest {
 	@TestConfiguration
 	static class TestConfig {
 		@Bean
+		RunLifecycleService runLifecycleService(ApplicationContext applicationContext) {
+			return new RunLifecycleService(new GenericApplicationService<>(eventStore(), cloudEventConverter()), applicationContext);
+		}
+
+		@Bean
 		InMemoryEventStore eventStore() {
 			return new InMemoryEventStore();
 		}
@@ -108,11 +111,6 @@ class LifecycleApplicationEventListenerTest {
 		@Bean
 		CloudEventConverter<Event> cloudEventConverter() {
 			return new JacksonCloudEventConverter<>(new ObjectMapper(), URI.create("urn:test"));
-		}
-
-		@Bean
-		LifecycleApplicationEventListener lifecycleApplicationEventListener() {
-			return new LifecycleApplicationEventListener(new GenericApplicationService<>(eventStore(), cloudEventConverter()));
 		}
 	}
 }

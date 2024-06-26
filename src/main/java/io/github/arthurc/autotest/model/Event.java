@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.app.model;
+package io.github.arthurc.autotest.model;
 
 /**
  * Represents an event that can be emitted by the application.
