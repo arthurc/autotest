@@ -8,6 +8,7 @@ import io.github.arthurc.autotest.lifecycle.spring.LifecycleScope;
 import io.github.arthurc.autotest.model.Event;
 import io.github.arthurc.autotest.run.Run;
 import io.github.arthurc.autotest.run.RunScoped;
+import io.github.arthurc.autotest.spring.ApplicationContextLifecycle;
 import io.github.arthurc.autotest.testplan.TestPlanLifecycle;
 import io.github.arthurc.autotest.testplan.TestPlanScoped;
 import org.occurrent.application.converter.CloudEventConverter;
@@ -20,6 +21,7 @@ import org.occurrent.subscription.inmemory.InMemorySubscriptionModel;
 import org.springframework.beans.factory.config.CustomScopeConfigurer;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
@@ -36,6 +38,11 @@ class AutotestAutoConfiguration {
 		configurer.addScope(TestPlanScoped.NAME, new LifecycleScope(TestPlanLifecycle.class));
 		configurer.addScope(RunScoped.NAME, new LifecycleScope(Run.class));
 		return configurer;
+	}
+
+	@Bean
+	ApplicationContextLifecycle.Registrar registrar(ApplicationContext applicationContext) {
+		return new ApplicationContextLifecycle.Registrar();
 	}
 
 	@Configuration(proxyBeanMethods = false)

@@ -8,8 +8,10 @@ import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
 import io.github.arthurc.autotest.run.Run;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
+import org.springframework.beans.BeansException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
 
 /**
@@ -48,10 +50,18 @@ public class ApplicationContextLifecycle extends Lifecycle {
 		return new SpringApplication(ApplicationContextLifecycleApplication.class);
 	}
 
-	public static class Registrar {
-		private final ApplicationContext applicationContext;
+	public static class Registrar implements ApplicationContextAware {
+		private ApplicationContext applicationContext;
+
+		public Registrar() {
+		}
 
 		public Registrar(ApplicationContext applicationContext) {
+			this.applicationContext = applicationContext;
+		}
+
+		@Override
+		public void setApplicationContext(ApplicationContext applicationContext) throws BeansException {
 			this.applicationContext = applicationContext;
 		}
 
