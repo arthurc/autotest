@@ -34,7 +34,7 @@ public abstract class Lifecycle {
 	};
 
 	static {
-		ServiceLoader.load(LifecycleFactory.class).forEach(factory -> factory.createLifecycle().begin());
+		ServiceLoader.load(Lifecycle.class).forEach(Lifecycle::begin);
 	}
 
 	private Lifecycle parent;
