@@ -3,7 +3,7 @@
  */
 package io.github.arthurc.autotest;
 
-import io.github.arthurc.autotest.testplan.TestPlanScoped;
+import io.github.arthurc.autotest.run.RunScoped;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AliasFor;
 
@@ -12,15 +12,15 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Indicates that a bean is autotest-scoped.
- * This is the same as {@link TestPlanScoped}, but with a different name for clarity.
+ * This is the same as {@link RunScoped}, but with a different name for clarity.
  *
  * @author Arthur Hartwig Carlsson
- * @see TestPlanScoped
+ * @see RunScoped
  * @since 1.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@TestPlanScoped
+@RunScoped
 public @interface AutotestScoped {
-	@AliasFor(annotation = TestPlanScoped.class)
+	@AliasFor(annotation = RunScoped.class)
 	ScopedProxyMode proxyMode() default ScopedProxyMode.DEFAULT;
 }
