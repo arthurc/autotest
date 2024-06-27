@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.testplan;
+package io.github.arthurc.autotest.spring.scope;
 
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
@@ -11,17 +11,17 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 
 /**
- * Indicates that a bean is test plan scoped.
- * This means that the bean is only available during the execution of a test plan.
+ * Indicates that a bean is run scoped.
+ * This means that the bean is only available during the execution of an autotest run.
  *
  * @author Arthur Hartwig Carlsson
  * @since 1.0.0
  */
 @Retention(RetentionPolicy.RUNTIME)
-@Scope(TestPlanScoped.NAME)
-public @interface TestPlanScoped {
+@Scope(RunScoped.NAME)
+public @interface RunScoped {
 
-	String NAME = "testplan";
+	String NAME = "run";
 
 	@AliasFor(annotation = Scope.class)
 	ScopedProxyMode proxyMode() default ScopedProxyMode.DEFAULT;

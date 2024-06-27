@@ -3,7 +3,7 @@
  */
 package io.github.arthurc.example.autotest.google;
 
-import io.github.arthurc.autotest.AutotestScoped;
+import io.github.arthurc.autotest.spring.scope.AutotestScoped;
 import io.github.arthurc.autotest.command.Command;
 import io.github.arthurc.autotest.web.Browser;
 import org.springframework.stereotype.Component;

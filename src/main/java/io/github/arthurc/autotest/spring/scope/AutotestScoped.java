@@ -1,9 +1,8 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest;
+package io.github.arthurc.autotest.spring.scope;
 
-import io.github.arthurc.autotest.run.RunScoped;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.core.annotation.AliasFor;
 

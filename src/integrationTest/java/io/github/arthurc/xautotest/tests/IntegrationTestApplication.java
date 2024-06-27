@@ -6,7 +6,7 @@ package io.github.arthurc.xautotest.tests;
 import com.github.tomakehurst.wiremock.WireMockServer;
 import com.github.tomakehurst.wiremock.client.WireMock;
 import com.github.tomakehurst.wiremock.core.WireMockConfiguration;
-import io.github.arthurc.autotest.AutotestScoped;
+import io.github.arthurc.autotest.spring.scope.AutotestScoped;
 import io.github.arthurc.autotest.selenium.SeleniumBrowserProperties;
 import io.github.arthurc.autotest.web.Browser;
 import org.springframework.boot.SpringApplication;

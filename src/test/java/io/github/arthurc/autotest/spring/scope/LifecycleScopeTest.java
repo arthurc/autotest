@@ -1,4 +1,4 @@
-package io.github.arthurc.autotest.lifecycle.spring;
+package io.github.arthurc.autotest.spring.scope;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import io.github.arthurc.autotest.lifecycle.NoSuchLifecycleException;

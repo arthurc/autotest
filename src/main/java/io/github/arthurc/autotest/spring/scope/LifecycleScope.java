@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.lifecycle.spring;
+package io.github.arthurc.autotest.spring.scope;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import org.springframework.beans.factory.ObjectFactory;

@@ -4,13 +4,13 @@
 package io.github.arthurc.autotest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import io.github.arthurc.autotest.lifecycle.spring.LifecycleScope;
+import io.github.arthurc.autotest.spring.scope.LifecycleScope;
 import io.github.arthurc.autotest.model.Event;
 import io.github.arthurc.autotest.run.Run;
-import io.github.arthurc.autotest.run.RunScoped;
+import io.github.arthurc.autotest.spring.scope.RunScoped;
 import io.github.arthurc.autotest.spring.ApplicationContextLifecycle;
 import io.github.arthurc.autotest.testplan.TestPlanLifecycle;
-import io.github.arthurc.autotest.testplan.TestPlanScoped;
+import io.github.arthurc.autotest.spring.scope.TestPlanScoped;
 import org.occurrent.application.converter.CloudEventConverter;
 import org.occurrent.application.converter.jackson.JacksonCloudEventConverter;
 import org.occurrent.application.service.blocking.ApplicationService;
