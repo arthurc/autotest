@@ -59,6 +59,7 @@ tasks.register('integrationTest', Test) {
 check.dependsOn integrationTest
 
 jacocoTestReport {
+    executionData integrationTest
     reports {
         xml.required = true
     }
