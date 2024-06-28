@@ -5,14 +5,15 @@ package io.github.arthurc.autotest.spring;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
+import io.github.arthurc.autotest.lifecycle.LifecycleResult;
 import io.github.arthurc.autotest.run.Run;
 import jakarta.annotation.PostConstruct;
-import jakarta.annotation.PreDestroy;
 import org.springframework.beans.BeansException;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.util.Assert;
+import org.springframework.util.ObjectUtils;
 
 /**
  * A lifecycle that is attached to an {@link ApplicationContext} and autowires the value of the result
@@ -23,6 +24,13 @@ import org.springframework.util.Assert;
  */
 public class ApplicationContextLifecycle extends Lifecycle {
 	private ApplicationContext applicationContext;
+
+	public ApplicationContextLifecycle() {
+	}
+
+	public ApplicationContextLifecycle(ApplicationContext applicationContext) {
+		this.applicationContext = applicationContext;
+	}
 
 	public ApplicationContext getApplicationContext() {
 		return applicationContext;
@@ -39,9 +47,15 @@ public class ApplicationContextLifecycle extends Lifecycle {
 				&& this.applicationContext == null) {
 			getSpringApplication().run();
 			Assert.notNull(this.applicationContext, "ApplicationContext was not set");
+		} else if (event instanceof LifecycleEvent.BeforeEnd beforeEnd
+				&& beforeEnd.result() instanceof LifecycleResult.Ok result
+				&& ObjectUtils.unwrapOptional(result.value()) != null
+				&& find(ApplicationContextLifecycle.class).orElse(null) == this
+				&& this.applicationContext != null) {
+			this.applicationContext.getAutowireCapableBeanFactory().autowireBean(result.value());
 		}
 
-		if (this.applicationContext != null) {
+		if (find(ApplicationContextLifecycle.class).orElse(null) == this && this.applicationContext != null) {
 			this.applicationContext.publishEvent(event);
 		}
 	}
@@ -68,11 +82,6 @@ public class ApplicationContextLifecycle extends Lifecycle {
 		@PostConstruct
 		void init() {
 			Lifecycle.find(ApplicationContextLifecycle.class).filter(l -> l.applicationContext == null).ifPresent(l -> l.setApplicationContext(this.applicationContext));
-		}
-
-		@PreDestroy
-		void destroy() {
-			Lifecycle.find(ApplicationContextLifecycle.class).filter(l -> l.applicationContext == this.applicationContext).ifPresent(l -> l.setApplicationContext(null));
 		}
 	}
 }

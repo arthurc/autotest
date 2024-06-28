@@ -4,7 +4,7 @@
 package io.github.arthurc.autotest.junit.jupiter;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
-import io.github.arthurc.autotest.spring.TestContextLifecycle;
+import io.github.arthurc.autotest.spring.ApplicationContextLifecycle;
 import org.junit.jupiter.api.extension.AfterAllCallback;
 import org.junit.jupiter.api.extension.BeforeAllCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
@@ -28,12 +28,12 @@ public class TestContextLifecycleExtension implements BeforeAllCallback, AfterAl
 
 	@Override
 	public void beforeAll(ExtensionContext context) {
-		new TestContextLifecycle(SpringExtension.getApplicationContext(context)).begin();
+		new ApplicationContextLifecycle(SpringExtension.getApplicationContext(context)).begin();
 	}
 
 	@Override
 	public void afterAll(final ExtensionContext context) {
-		Lifecycle.get(TestContextLifecycle.class).end();
+		Lifecycle.get(ApplicationContextLifecycle.class).end();
 
 		var store = context.getRoot().getStore(SPRING_NAMESPACE);
 		var testClass = context.getRequiredTestClass();
