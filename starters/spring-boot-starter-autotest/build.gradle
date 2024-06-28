@@ -8,7 +8,9 @@ dependencies {
     api 'org.springframework.boot:spring-boot-starter-jdbc'
     api 'org.seleniumhq.selenium:selenium-java'
     api 'com.h2database:h2'
-    api 'io.cloudevents:cloudevents-core'
-    api 'io.cloudevents:cloudevents-json-jackson'
+    api 'org.occurrent:eventstore-inmemory'
+    api 'org.occurrent:application-service-blocking'
+    api 'org.occurrent:subscription-inmemory'
+    api 'org.occurrent:cloudevent-converter-jackson'
     api rootProject
 }

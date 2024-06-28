@@ -429,5 +429,26 @@ class LifecycleTest {
 				assertThat(foo.findParent(TestLifecycle.class)).isEmpty();
 			}
 		}
+
+		@Nested
+		class Finding_the_self_or_parent_lifecycle {
+			private final TestLifecycle foo = new TestLifecycle();
+			private final TestLifecycle bar = new TestLifecycle();
+			private final TestLifecycle baz = new TestLifecycle();
+
+			@Test
+			void Returns_the_self_lifecycle_if_it_matches() {
+				var parent = foo.call(() -> bar.call(() -> baz.call(() -> baz.findSelfOrParent(TestLifecycle.class))));
+
+				assertThat(parent).hasValue(baz);
+			}
+
+			@Test
+			void Returns_the_parent_lifecycle() {
+				var parent = foo.call(() -> bar.call(() -> baz.call(() -> baz.findSelfOrParent(TestLifecycle.class, foo::equals))));
+
+				assertThat(parent).hasValue(foo);
+			}
+		}
 	}
 }

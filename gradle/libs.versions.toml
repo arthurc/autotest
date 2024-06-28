@@ -2,10 +2,10 @@
 spring-boot = "3.3.1"
 dependency-management = "1.1.5"
 wiremock = "3.7.0"
-cloudevents = "3.0.0"
+occurrent = "0.18.0"
 
 [libraries]
 spring-boot-gradle-plugin = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "spring-boot" }
 dependency-management-plugin = { module = "io.spring.gradle:dependency-management-plugin", version.ref = "dependency-management" }
 wiremock-standalone = { module = "org.wiremock:wiremock-standalone", version.ref = "wiremock" }
-cloudevents-bom = { module = "io.cloudevents:cloudevents-bom", version.ref = "cloudevents" }
+occurrent-bom = { module = "org.occurrent:occurrent-bom", version.ref = "occurrent" }
