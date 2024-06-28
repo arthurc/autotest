@@ -1,6 +1,5 @@
-package io.github.arthurc.autotest.spring.boot.autoconfigure;
+package io.github.arthurc.autotest.selenium;
 
-import io.github.arthurc.autotest.selenium.ChromeOptionsProperties;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.chrome.ChromeOptions;
 

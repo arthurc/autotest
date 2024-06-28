@@ -1,4 +1,4 @@
-package io.github.arthurc.autotest.teststage.junit.jupiter;
+package io.github.arthurc.autotest.junit.jupiter;
 
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.extension.ExtendWith;

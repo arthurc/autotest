@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.spring.junit.jupiter;
+package io.github.arthurc.autotest.junit.jupiter;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

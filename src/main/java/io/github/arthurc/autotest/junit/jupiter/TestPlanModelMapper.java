@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.testplan.junit.jupiter;
+package io.github.arthurc.autotest.junit.jupiter;
 
 import io.github.arthurc.autotest.AutotestTest;
 import io.github.arthurc.autotest.testplan.TestId;
