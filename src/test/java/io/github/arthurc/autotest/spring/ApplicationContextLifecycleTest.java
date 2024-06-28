@@ -3,11 +3,13 @@
  */
 package io.github.arthurc.autotest.spring;
 
+import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
 import io.github.arthurc.autotest.run.Run;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
@@ -64,30 +66,6 @@ class ApplicationContextLifecycleTest {
 
 			assertThat(applicationContextLifecycle.getApplicationContext()).isSameAs(applicationContext);
 		}
-
-		@Test
-		void Unregisters_the_application_context_on_PreDestroy() {
-			ApplicationContextLifecycle.Registrar registrar = new ApplicationContextLifecycle.Registrar(applicationContext);
-
-			applicationContextLifecycle.run(() -> {
-				registrar.init();
-				assertThat(applicationContextLifecycle.getApplicationContext()).isSameAs(applicationContext);
-				registrar.destroy();
-			});
-
-			assertThat(applicationContextLifecycle.getApplicationContext()).isNull();
-		}
-
-		@Test
-		void Does_not_unregister_if_the_application_context_and_the_context_being_closed_are_not_the_same() {
-			ApplicationContext other = mock();
-			applicationContextLifecycle.setApplicationContext(applicationContext);
-
-			applicationContextLifecycle.run(() ->
-					new ApplicationContextLifecycle.Registrar(other).destroy());
-
-			assertThat(applicationContextLifecycle.getApplicationContext()).isSameAs(applicationContext);
-		}
 	}
 
 	@Test
@@ -118,6 +96,44 @@ class ApplicationContextLifecycleTest {
 
 		verify(applicationContextLifecycle).getSpringApplication();
 		assertThat(applicationContextLifecycle.getApplicationContext()).isNotNull();
+	}
+
+
+	@Nested
+	class Handling_BeforeEnd_lifecycle_event {
+		private ApplicationContextLifecycle testContextLifecycle;
+
+		@BeforeEach
+		void setUp() {
+			var applicationContext = new AnnotationConfigApplicationContext();
+			applicationContext.refresh();
+
+			this.testContextLifecycle = new ApplicationContextLifecycle(applicationContext);
+		}
+
+		@Test
+		void Autowires_the_value_from_the_return_value() {
+			Foo foo = testContextLifecycle.call(Foo::new);
+
+			assertThat(foo.applicationContext).isNotNull();
+		}
+
+		@Test
+		void Autowires_the_value_from_nested_return_value() {
+			testContextLifecycle.run(() -> {
+				Foo foo = new TestLifecycle().call(Foo::new);
+
+				assertThat(foo.applicationContext).isNotNull();
+			});
+		}
+	}
+
+	static class TestLifecycle extends Lifecycle {
+	}
+
+	static class Foo {
+		@Autowired
+		ApplicationContext applicationContext;
 	}
 
 	@Configuration
