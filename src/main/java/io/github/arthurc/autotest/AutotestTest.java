@@ -3,8 +3,8 @@
  */
 package io.github.arthurc.autotest;
 
-import io.github.arthurc.autotest.spring.junit.jupiter.TestContextLifecycleExtension;
-import io.github.arthurc.autotest.teststage.junit.jupiter.TestStageExtension;
+import io.github.arthurc.autotest.junit.jupiter.TestContextLifecycleExtension;
+import io.github.arthurc.autotest.junit.jupiter.TestStageExtension;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;

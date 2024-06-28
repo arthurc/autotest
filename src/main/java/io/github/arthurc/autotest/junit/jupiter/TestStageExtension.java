@@ -1,7 +1,7 @@
 /**
  * SPDX-License-Identifier: MIT
  */
-package io.github.arthurc.autotest.teststage.junit.jupiter;
+package io.github.arthurc.autotest.junit.jupiter;
 
 import io.github.arthurc.autotest.lifecycle.LifecycleResult;
 import io.github.arthurc.autotest.teststage.TestStage;

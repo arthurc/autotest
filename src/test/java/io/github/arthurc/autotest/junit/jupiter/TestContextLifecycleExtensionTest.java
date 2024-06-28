@@ -1,4 +1,4 @@
-package io.github.arthurc.autotest.spring.junit.jupiter;
+package io.github.arthurc.autotest.junit.jupiter;
 
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
