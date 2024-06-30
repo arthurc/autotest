@@ -6,6 +6,7 @@ package io.github.arthurc.autotest.spring;
 import io.github.arthurc.autotest.lifecycle.Lifecycle;
 import io.github.arthurc.autotest.lifecycle.LifecycleEvent;
 import io.github.arthurc.autotest.run.Run;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -37,10 +38,15 @@ class ApplicationContextLifecycleTest {
 
 		this.applicationContextLifecycle = spy(new ApplicationContextLifecycle() {
 			@Override
-			protected SpringApplication getSpringApplication() {
-				return new SpringApplication(TestConfig.class);
+			protected void runSpringApplication() {
+				SpringApplication.run(TestConfig.class);
 			}
 		});
+	}
+
+	@AfterEach
+	void tearDown() {
+		Lifecycle.find(ApplicationContextLifecycle.class).ifPresent(lifecycle -> lifecycle.setApplicationContext(null));
 	}
 
 	@Nested
@@ -94,7 +100,7 @@ class ApplicationContextLifecycleTest {
 		applicationContextLifecycle.run(() ->
 				applicationContextLifecycle.onLifecycleEvent(new LifecycleEvent.AfterBegin(new Run())));
 
-		verify(applicationContextLifecycle).getSpringApplication();
+		verify(applicationContextLifecycle).runSpringApplication();
 		assertThat(applicationContextLifecycle.getApplicationContext()).isNotNull();
 	}
 
