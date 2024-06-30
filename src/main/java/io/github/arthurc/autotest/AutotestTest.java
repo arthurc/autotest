@@ -3,12 +3,15 @@
  */
 package io.github.arthurc.autotest;
 
-import io.github.arthurc.autotest.junit.jupiter.TestContextLifecycleExtension;
 import io.github.arthurc.autotest.junit.jupiter.TestStageExtension;
+import io.github.arthurc.autotest.spring.AutotestTestContextBootstrapper;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.AliasFor;
+import org.springframework.test.context.BootstrapWith;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
@@ -25,12 +28,13 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
  */
 @Retention(RUNTIME)
 @Target(TYPE)
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.NONE)
 @Tag(AutotestTest.TAG)
-@ExtendWith({TestContextLifecycleExtension.class, TestStageExtension.class})
+@BootstrapWith(AutotestTestContextBootstrapper.class)
+@ExtendWith({SpringExtension.class, TestStageExtension.class})
+@ContextConfiguration
 public @interface AutotestTest {
 	String TAG = "io.github.arthurc.autotest";
 
-	@AliasFor(annotation = SpringBootTest.class)
+	@AliasFor(annotation = ContextConfiguration.class)
 	Class<?>[] classes() default {};
 }

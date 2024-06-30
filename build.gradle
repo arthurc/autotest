@@ -11,6 +11,7 @@ dependencies {
 	optionalApi 'org.springframework.boot:spring-boot-starter'
 	optionalApi 'org.springframework.boot:spring-boot-starter-test'
 	optionalApi 'org.springframework:spring-jdbc'
+	optionalApi 'org.springframework.boot:spring-boot-loader-tools'
 	optionalApi 'org.junit.platform:junit-platform-launcher'
 	optionalApi 'org.junit.jupiter:junit-jupiter-api'
 	optionalApi 'org.seleniumhq.selenium:selenium-java'
