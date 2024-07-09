@@ -1,6 +1,6 @@
 [versions]
 spring-boot = "3.3.1"
-dependency-management = "1.1.5"
+dependency-management = "1.1.6"
 wiremock = "3.8.0"
 occurrent = "0.19.1"
 
