@@ -1,7 +1,7 @@
 [versions]
 spring-boot = "3.3.5"
 dependency-management = "1.1.6"
-wiremock = "3.9.1"
+wiremock = "3.9.2"
 occurrent = "0.19.1"
 
 [libraries]
