@@ -2,7 +2,7 @@
 spring-boot = "3.3.5"
 dependency-management = "1.1.6"
 wiremock = "3.9.2"
-occurrent = "0.19.1"
+occurrent = "0.19.6"
 
 [libraries]
 spring-boot-gradle-plugin = { module = "org.springframework.boot:spring-boot-gradle-plugin", version.ref = "spring-boot" }
